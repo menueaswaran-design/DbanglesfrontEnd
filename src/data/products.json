@@ -1,0 +1,186 @@
+{
+  "bangles": [
+    {
+      "id": 1,
+      "name": "Golden Spiral Bangle Set",
+      "description": "Handcrafted golden bangles with intricate spiral design",
+      "originalPrice": 2499,
+      "discountedPrice": 1799,
+      "category": "Kundan bangles",
+      "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 2,
+      "name": "Traditional Kundan Bangles",
+      "description": "Elegant kundan work bangles perfect for special occasions",
+      "originalPrice": 3999,
+      "discountedPrice": 2999,
+      "category": "Kundan bangles",
+      "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 3,
+      "name": "Pearl Embellished Bangles",
+      "description": "Delicate pearl bangles with rose gold finish",
+      "originalPrice": 1999,
+      "discountedPrice": 1499,
+      "category": "Bracelets",
+      "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 4,
+      "name": "Colorful Thread Bangles",
+      "description": "Vibrant multicolor thread work bangles set of 6",
+      "originalPrice": 899,
+      "discountedPrice": 599,
+      "category": "Glass bangles",
+      "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 5,
+      "name": "Antique Silver Bangles",
+      "description": "Vintage inspired silver bangles with oxidized finish",
+      "originalPrice": 2799,
+      "discountedPrice": 1999,
+      "category": "Bracelets",
+      "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 6,
+      "name": "Meenakari Designer Bangles",
+      "description": "Traditional meenakari work bangles with colorful enamel",
+      "originalPrice": 3499,
+      "discountedPrice": 2699,
+      "category": "Kundan bangles",
+      "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 7,
+      "name": "Crystal Hair Pin Set",
+      "description": "Elegant crystal hair pins for special occasions",
+      "originalPrice": 799,
+      "discountedPrice": 599,
+      "category": "Hair accessories",
+      "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 8,
+      "name": "Traditional Saree Pin",
+      "description": "Beautiful handcrafted saree pins with stone work",
+      "originalPrice": 499,
+      "discountedPrice": 349,
+      "category": "Saree pins",
+      "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 9,
+      "name": "Delicate Invisible Chain",
+      "description": "Ultra-fine invisible chain for pendants",
+      "originalPrice": 1299,
+      "discountedPrice": 999,
+      "category": "Invisible chains",
+      "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 10,
+      "name": "Designer Glass Bangles",
+      "description": "Colorful designer glass bangles set of 12",
+      "originalPrice": 1499,
+      "discountedPrice": 1099,
+      "category": "Glass bangles",
+      "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 11,
+      "name": "Gold Plated Hair Comb",
+      "description": "Elegant gold plated hair comb with pearls",
+      "originalPrice": 999,
+      "discountedPrice": 749,
+      "category": "Hair accessories",
+      "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 12,
+      "name": "Diamond Saree Pin",
+      "description": "Stunning diamond studded saree pin",
+      "originalPrice": 1999,
+      "discountedPrice": 1499,
+      "category": "Saree pins",
+      "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=500&fit=crop"
+    }
+  ],
+  "dresses": [
+    {
+      "id": 13,
+      "name": "Floral Print Maxi Dress",
+      "description": "Elegant floral maxi dress perfect for summer occasions",
+      "originalPrice": 3499,
+      "discountedPrice": 2499,
+      "category": "Sarees",
+      "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 14,
+      "name": "Embroidered Anarkali Suit",
+      "description": "Stunning anarkali with intricate embroidery work",
+      "originalPrice": 5999,
+      "discountedPrice": 4499,
+      "category": "Unstitched chudi material",
+      "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 15,
+      "name": "Handwoven Cotton Dress",
+      "description": "Comfortable handwoven cotton dress for daily wear",
+      "originalPrice": 1999,
+      "discountedPrice": 1299,
+      "category": "Unstitched chudi material",
+      "image": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 16,
+      "name": "Designer Silk Saree",
+      "description": "Luxurious silk saree with contemporary design",
+      "originalPrice": 7999,
+      "discountedPrice": 5999,
+      "category": "Sarees",
+      "image": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 17,
+      "name": "Traditional Banarasi Saree",
+      "description": "Elegant banarasi saree with golden zari work",
+      "originalPrice": 8999,
+      "discountedPrice": 6999,
+      "category": "Sarees",
+      "image": "https://images.unsplash.com/photo-1583391733981-12e20ed59a1e?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 18,
+      "name": "Cotton Chudi Material",
+      "description": "Premium cotton chudi material with printed design",
+      "originalPrice": 1499,
+      "discountedPrice": 999,
+      "category": "Unstitched chudi material",
+      "image": "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 19,
+      "name": "Kanjivaram Silk Saree",
+      "description": "Traditional kanjivaram saree with temple border",
+      "originalPrice": 12999,
+      "discountedPrice": 9999,
+      "category": "Sarees",
+      "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=500&fit=crop"
+    },
+    {
+      "id": 20,
+      "name": "Designer Chudi Set",
+      "description": "Trendy designer chudi material with dupatta",
+      "originalPrice": 2499,
+      "discountedPrice": 1799,
+      "category": "Unstitched chudi material",
+      "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&h=500&fit=crop"
+    }
+  ]
+}
