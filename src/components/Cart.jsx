@@ -95,7 +95,7 @@ export default function CombinedCartCheckout() {
       };
 
       // Send to backend (adjust URL as needed)
-      const res = await fetch("http://localhost:3001/api/orders", {
+      const res = await fetch("https://dbangles.vercel.app/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderPayload),
