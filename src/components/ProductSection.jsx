@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import ProductCard from './ProductCard';
 import '../styles/ProductSection.css';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function ProductSection({ title, products, id, showCategories, categories }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
-
+  const Navigate = useNavigate();
   // Filter products based on selected category
   const filteredProducts = selectedCategory === 'All' 
     ? products 
@@ -34,7 +36,11 @@ function ProductSection({ title, products, id, showCategories, categories }) {
       
       <div className="products-grid">
         {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onView={(prod) => Navigate(`/product/${prod.id}`)}
+          />
         ))}
       </div>
     </section>

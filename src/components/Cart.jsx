@@ -1,17 +1,6 @@
 import React, { useState } from "react";
-import {
-  User,
-  Phone,
-  MessageCircle,
-  Calendar,
-  MapPin,
-  FileText,
-  Check,
-  Trash2,
-  X
-} from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
-
 export default function CombinedCartCheckout() {
   const [cartItems, setCartItems] = useState(() => {
     const stored = localStorage.getItem("cart");
@@ -79,7 +68,6 @@ export default function CombinedCartCheckout() {
 
     setIsSubmitting(true);
     try {
-      // Prepare order data
       const orderPayload = {
         customerName: form.customerName,
         phoneNumber: form.phoneNumber,
@@ -94,7 +82,6 @@ export default function CombinedCartCheckout() {
         })),
       };
 
-      // Send to backend (adjust URL as needed)
       const res = await fetch("https://dbangles.vercel.app/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,64 +104,100 @@ export default function CombinedCartCheckout() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f7f8fa" }}>
-      <Navbar />
+    <div style={styles.container}>
+      <Navbar/>
+      <div style={styles.navbar} />
 
       {/* MAIN CONTENT */}
-      <div
-        style={{
-          maxWidth: 480,
-          margin: "90px auto 0 auto",
-          padding: 16,
-          filter: showCheckout ? "blur(4px)" : "none",
-        }}
-      >
+      <div style={{ ...styles.mainContent, filter: showCheckout ? "blur(4px)" : "none" }}>
         {cartItems.length === 0 ? (
-          <h3 style={{ textAlign: "center", color: "#888", fontWeight: 500, marginTop: 48 }}>Your cart is empty 🛒</h3>
+          <div style={styles.emptyCart}>
+            <div style={styles.emptyIcon}>🛒</div>
+            <h3 style={styles.emptyTitle}>Your cart is empty</h3>
+            <p style={styles.emptyText}>Add some products to get started</p>
+          </div>
         ) : (
           <>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* TITLE */}
+            <h2 style={styles.pageTitle}>Shopping Cart</h2>
+
+            {/* CART ITEMS */}
+            <div style={styles.itemsList}>
               {cartItems.map((item) => (
-                <div key={item.id} style={styles.cardModern}>
-                  <img src={item.image} style={styles.imageModern} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: 16, color: "#222", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{item.name}</div>
-                    <div style={{ color: "#764ba2", fontWeight: 500, fontSize: 15 }}>₹{item.discountedPrice}</div>
+                <div key={item.id} style={styles.cartItem}>
+                  <img src={item.image} alt={item.name} style={styles.itemImage} />
+                  
+                  <div style={styles.itemDetails}>
+                    <h4 style={styles.itemName}>{item.name}</h4>
+                    
+                    <div style={styles.priceRow}>
+                      <span style={styles.itemPrice}>₹{item.discountedPrice}</span>
+                      <span style={styles.itemOriginal}>₹{Math.round(item.discountedPrice * 1.25)}</span>
+                    </div>
+
+                    <div style={styles.subtotalRow}>
+                      Subtotal: <span style={styles.subtotalValue}>₹{item.discountedPrice * item.quantity}</span>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <button style={styles.qtyBtn} onClick={() => decreaseQty(item.id)}>-</button>
-                    <span style={{ minWidth: 24, textAlign: "center", fontWeight: 500 }}>{item.quantity}</span>
-                    <button style={styles.qtyBtn} onClick={() => increaseQty(item.id)}>+</button>
+
+                  <div style={styles.itemControls}>
+                    <div style={styles.qtyBox}>
+                      <button style={styles.qtyBtnSmall} onClick={() => decreaseQty(item.id)}>−</button>
+                      <span style={styles.qtyDisplay}>{item.quantity}</span>
+                      <button style={styles.qtyBtnSmall} onClick={() => increaseQty(item.id)}>+</button>
+                    </div>
+                    <button style={styles.removeIconBtn} onClick={() => removeItem(item.id)}>
+                      <Trash2 size={18} />
+                    </button>
                   </div>
-                  <button style={styles.removeBtn} onClick={() => removeItem(item.id)} title="Remove">
-                    <Trash2 size={18} />
-                  </button>
                 </div>
               ))}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "24px 0 8px 0" }}>
-              <span style={{ fontWeight: 600, fontSize: 18, color: "#222" }}>Total</span>
-              <span style={{ fontWeight: 700, fontSize: 20, color: "#764ba2" }}>₹{totalPrice}</span>
-            </div>
+            {/* ORDER SUMMARY */}
+            <div style={styles.summarySection}>
+              <h3 style={styles.summaryTitle}>Order Summary</h3>
 
-            <button
-              style={styles.checkoutBtnModern}
-              onClick={() => setShowCheckout(true)}
-            >
-              Checkout
-            </button>
+              {/* Items List in Summary */}
+              <div style={styles.summaryItems}>
+                {cartItems.map((item) => (
+                  <div key={item.id} style={styles.summaryItem}>
+                    <div style={styles.summaryItemName}>{item.name}</div>
+                    <div style={styles.summaryItemPrice}>₹{item.discountedPrice * item.quantity}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pricing Breakdown */}
+              <div style={styles.pricingBreakdown}>
+                <div style={styles.breakdownRow}>
+                  <span>Subtotal</span>
+                  <span>₹{totalPrice}</span>
+                </div>
+               
+              </div>
+
+              {/* Total */}
+              <div style={styles.totalSection}>
+                <span style={styles.totalLabel}>Total Amount</span>
+                <span style={styles.totalPrice}>₹{totalPrice}</span>
+              </div>
+
+              {/* Checkout Button */}
+              <button style={styles.checkoutBtn} onClick={() => setShowCheckout(true)}>
+                Proceed to Checkout
+              </button>
+
+             
+            </div>
           </>
         )}
       </div>
 
-      {/* MODAL */}
+      {/* MODAL - ORIGINAL FORM UNCHANGED */}
       {showCheckout && (
         <div style={styles.modalOverlay} onClick={() => setShowCheckout(false)}>
-          <div
-            style={styles.modal}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
             <button
               style={styles.closeBtn}
               onClick={() => setShowCheckout(false)}
@@ -185,12 +208,11 @@ export default function CombinedCartCheckout() {
 
             <h3 style={{ marginBottom: 18, color: "#764ba2", fontWeight: 700, fontSize: 22 }}>Delivery Details</h3>
 
-            <form style={styles.formGrid} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+            <div style={styles.formGrid} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
               <div style={styles.formCol}>
                 <Input label="Full Name" name="customerName" onChange={handleChange} />
                 <Input label="Phone Number" name="phoneNumber" onChange={handleChange} />
                 <Input label="WhatsApp Number" name="whatsappNumber" onChange={handleChange} />
-               
               </div>
               <div style={styles.formCol}>
                 <Textarea
@@ -205,7 +227,7 @@ export default function CombinedCartCheckout() {
                   onChange={handleChange}
                 />
               </div>
-            </form>
+            </div>
 
             <button
               style={{
@@ -228,8 +250,6 @@ export default function CombinedCartCheckout() {
   );
 }
 
-/* INPUT COMPONENTS */
-
 const Input = ({ label, optional, ...props }) => (
   <div style={{ marginBottom: 12 }}>
     <label>
@@ -250,88 +270,238 @@ const Textarea = ({ label, optional, ...props }) => (
   </div>
 );
 
-/* STYLES */
-
 const styles = {
-    formGrid: {
-      display: "flex",
-      gap: 18,
-      marginBottom: 8,
-      flexWrap: "wrap",
-    },
-    formCol: {
-      flex: 1,
-      minWidth: 200,
-      display: "flex",
-      flexDirection: "column",
-      gap: 10,
-    },
-  cardModern: {
+  container: {
+    minHeight: "100vh",
+    background: "#f8f9fa",
+  },
+  navbar: {
+    height: "70px",
+    background: "#fff",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+  },
+  mainContent: {
+    maxWidth: "600px",
+    margin: "0 auto",
+    padding: "20px 16px 40px",
+    transition: "filter 0.3s ease",
+  },
+  emptyCart: {
+    textAlign: "center",
+    paddingTop: "80px",
+  },
+  emptyIcon: {
+    fontSize: "64px",
+    marginBottom: "20px",
+  },
+  emptyTitle: {
+    color: "#333",
+    fontSize: "20px",
+    fontWeight: "600",
+    margin: "0 0 8px 0",
+  },
+  emptyText: {
+    color: "#999",
+    fontSize: "14px",
+    margin: 0,
+  },
+  pageTitle: {
+    fontSize: "26px",
+    fontWeight: "700",
+    color: "#000",
+    margin: "0 0 24px 0",
+  },
+  itemsList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    marginBottom: "32px",
+  },
+  cartItem: {
+    background: "#fff",
+    borderRadius: "14px",
+    padding: "14px",
+    display: "flex",
+    gap: "12px",
+    border: "1px solid #e8e8e8",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+  },
+  itemImage: {
+    width: "100px",
+    height: "100px",
+    borderRadius: "10px",
+    objectFit: "cover",
+    background: "#f0f0f0",
+  },
+  itemDetails: {
+    flex: 1,
+    minWidth: 0,
+  },
+  itemName: {
+    fontSize: "15px",
+    fontWeight: "700",
+    color: "#000",
+    margin: "0 0 8px 0",
+    lineHeight: "1.3",
+  },
+  priceRow: {
+    display: "flex",
+    gap: "8px",
+    alignItems: "center",
+    marginBottom: "6px",
+  },
+  itemPrice: {
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "#764ba2",
+  },
+  itemOriginal: {
+    fontSize: "13px",
+    color: "#bbb",
+    textDecoration: "line-through",
+  },
+  subtotalRow: {
+    fontSize: "12px",
+    color: "#666",
+  },
+  subtotalValue: {
+    fontWeight: "600",
+    color: "#000",
+  },
+  itemControls: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    alignItems: "center",
+  },
+  qtyBox: {
     display: "flex",
     alignItems: "center",
-    gap: 14,
-    background: "#fff",
-    borderRadius: 14,
-    boxShadow: "0 2px 12px 0 rgba(118,75,162,0.07)",
-    padding: 12,
-    marginBottom: 0,
-    border: "1px solid #f0f0f0",
-    transition: "box-shadow 0.2s",
-  },
-
-  imageModern: {
-    width: 54,
-    height: 54,
-    objectFit: "cover",
-    borderRadius: 10,
-    boxShadow: "0 1px 4px 0 rgba(118,75,162,0.10)",
-  },
-
-  qtyBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    border: "none",
     background: "#f3f0fa",
-    color: "#764ba2",
-    fontWeight: 700,
-    fontSize: 18,
-    cursor: "pointer",
-    transition: "background 0.2s, color 0.2s",
-    boxShadow: "0 1px 2px 0 rgba(118,75,162,0.06)",
-    outline: "none",
+    borderRadius: "8px",
+    padding: "4px 8px",
+    gap: "6px",
   },
-
-  removeBtn: {
+  qtyBtnSmall: {
+    width: "28px",
+    height: "28px",
     border: "none",
-    background: "#fbe9f7",
-    color: "#d72660",
-    borderRadius: 8,
-    width: 28,
-    height: 28,
+    background: "#fff",
+    color: "#764ba2",
+    fontWeight: "700",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: "16px",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    cursor: "pointer",
-    marginLeft: 6,
-    transition: "background 0.2s, color 0.2s",
   },
-
-  checkoutBtnModern: {
+  qtyDisplay: {
+    width: "24px",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: "14px",
+  },
+  removeIconBtn: {
+    width: "36px",
+    height: "36px",
+    border: "none",
+    background: "#fbe9f7",
+    color: "#d72660",
+    borderRadius: "8px",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+  },
+  summarySection: {
+    background: "#fff",
+    borderRadius: "16px",
+    padding: "20px",
+    border: "1px solid #e8e8e8",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+  },
+  summaryTitle: {
+    fontSize: "18px",
+    fontWeight: "700",
+    color: "#000",
+    margin: "0 0 16px 0",
+  },
+  summaryItems: {
+    marginBottom: "16px",
+    paddingBottom: "16px",
+    borderBottom: "1px solid #e8e8e8",
+  },
+  summaryItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "13px",
+    marginBottom: "8px",
+  },
+  summaryItemName: {
+    color: "#666",
+  },
+  summaryItemPrice: {
+    fontWeight: "600",
+    color: "#000",
+  },
+  pricingBreakdown: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    marginBottom: "16px",
+    paddingBottom: "16px",
+    borderBottom: "1px solid #e8e8e8",
+  },
+  breakdownRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    fontSize: "13px",
+    color: "#666",
+  },
+  freeText: {
+    color: "#16a34a",
+    fontWeight: "600",
+  },
+  totalSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    paddingBottom: "16px",
+    borderBottom: "2px solid #e8e8e8",
+  },
+  totalLabel: {
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "#000",
+  },
+  totalPrice: {
+    fontSize: "22px",
+    fontWeight: "700",
+    color: "#764ba2",
+  },
+  checkoutBtn: {
     width: "100%",
-    padding: 14,
-    background: "linear-gradient(135deg,#764ba2,#667eea)",
+    padding: "14px",
+    background: "linear-gradient(135deg, #764ba2, #667eea)",
     color: "#fff",
     border: "none",
-    borderRadius: 10,
-    fontWeight: 700,
-    fontSize: 17,
-    marginTop: 18,
+    borderRadius: "10px",
+    fontWeight: "700",
+    fontSize: "15px",
     cursor: "pointer",
-    boxShadow: "0 2px 8px 0 rgba(118,75,162,0.10)",
-    transition: "background 0.2s",
+    boxShadow: "0 2px 8px rgba(118,75,162,0.2)",
+    marginBottom: "12px",
   },
-
+  trustMessage: {
+    textAlign: "center",
+    fontSize: "12px",
+    color: "#999",
+    margin: 0,
+  },
   modalOverlay: {
     position: "fixed",
     inset: 0,
@@ -342,7 +512,6 @@ const styles = {
     justifyContent: "center",
     zIndex: 1000,
   },
-
   modal: {
     background: "#fff",
     padding: 24,
@@ -351,7 +520,6 @@ const styles = {
     maxWidth: 500,
     position: "relative",
   },
-
   closeBtn: {
     position: "absolute",
     top: 10,
@@ -359,20 +527,31 @@ const styles = {
     border: "none",
     background: "none",
     cursor: "pointer",
+    padding: 0,
   },
-
+  formGrid: {
+    display: "flex",
+    gap: 18,
+    marginBottom: 8,
+    flexWrap: "wrap",
+  },
+  formCol: {
+    flex: 1,
+    minWidth: 200,
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+  },
   input: {
     width: "100%",
     padding: 10,
     border: "1px solid #e5e7eb",
     borderRadius: 6,
   },
-
   confirmBtn: {
     width: "100%",
     padding: 14,
     marginTop: 10,
-    background: "linear-gradient(135deg,#667eea,#764ba2)",
     color: "#fff",
     border: "none",
     borderRadius: 8,

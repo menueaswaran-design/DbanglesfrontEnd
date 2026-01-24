@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductSection from './components/ProductSection';
 import Cart from './components/Cart';
-import Orders from './components/Orders';
+import { CartProvider } from './components/CartContext';
 import './App.css';
+import ProductModal from './components/ProductModal';
 
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,22 +17,46 @@ function AppContent() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch products from API
+  // Fetch products from API or localStorage (cache)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        // Try to get cached products from localStorage
+        let cached = null;
+        try {
+          const cachedStr = localStorage.getItem('productsData');
+          if (cachedStr) {
+            cached = JSON.parse(cachedStr);
+            // Validate cached structure
+            if (cached && Array.isArray(cached.bangles) && Array.isArray(cached.dresses)) {
+              setProductsData(cached);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (e) {
+          // Ignore parse errors and fetch fresh
+        }
+
+        // If not cached, fetch from API
         const response = await fetch('https://dbangles.vercel.app/api/products');
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
         const data = await response.json();
-        
         if (data.success && data.products) {
           // Separate products by productType
           const bangles = data.products.filter(p => p.productType === 'bangles');
           const dresses = data.products.filter(p => p.productType === 'dresses');
-          setProductsData({ bangles, dresses });
+          const newProductsData = { bangles, dresses };
+          setProductsData(newProductsData);
+          // Cache in localStorage
+          try {
+            localStorage.setItem('productsData', JSON.stringify(newProductsData));
+          } catch (e) {
+            // Ignore quota/storage errors
+          }
         } else {
           setProductsData({ bangles: [], dresses: [] });
         }
@@ -42,7 +68,6 @@ function AppContent() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -132,15 +157,19 @@ function AppContent() {
   );
 }
 
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<AppContent />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path='/orders' element={<Orders />} />
-      </Routes>
-    </Router>
+    <CartProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<AppContent />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path='/product/:productid' element={<ProductModal />} />
+          {/* <Route path='/orders' element={<Orders />} /> */}
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 

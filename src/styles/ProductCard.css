@@ -95,15 +95,15 @@
 
 .discounted-price {
   font-size: var(--font-size-lg);
-  color: var(--primary-color);
+  color: black;
   font-weight: 800;
 }
 
 .add-to-cart-btn {
   width: 100%;
   margin-top: var(--spacing-sm);
-  padding: 0.625rem;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  padding: 0.75rem;
+  background: var(--primary-color, #0f766e); /* Use primary color variable, fallback to #0f766e */
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -114,18 +114,22 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-xs);
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+}
+:root {
+  --primary-color: #0f766e;
 }
 
 .add-to-cart-btn:hover {
+  background: #115e59; /* Slightly darker */
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  background: linear-gradient(135deg, var(--primary-dark), #a21caf);
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.35);
 }
 
 .add-to-cart-btn:active {
   transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);
 }
 
 /* Mobile Responsive */

@@ -1,7 +1,18 @@
-import React from 'react';
-import '../styles/Hero.css';
+import React, { useState } from "react";
+import "../styles/Hero.css";
 
 function Hero() {
+  const [active, setActive] = useState(null);
+
+  const handleClick = (section) => {
+    setActive(section);
+
+    const element = document.getElementById(section);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section className="hero" id="home">
       <div className="hero-background">
@@ -10,16 +21,32 @@ function Hero() {
         <div className="art-line line-1"></div>
         <div className="art-line line-2"></div>
       </div>
-      
+
       <div className="hero-container">
         <div className="hero-content">
           <h1 className="hero-title">Handmade Bangles & Dresses</h1>
           <p className="hero-subtitle">
             Discover unique, handcrafted pieces that blend tradition with modern elegance.
           </p>
+
           <div className="hero-buttons">
-            <a href="#bangles" className="btn btn-primary">Shop Bangles</a>
-            <a href="#dresses" className="btn btn-secondary">Shop Dresses</a>
+            <button
+              className={`btn ${
+                active === "bangles" ? "btn-active" : "btn-primary"
+              }`}
+              onClick={() => handleClick("bangles")}
+            >
+              Shop Bangles
+            </button>
+
+            <button
+              className={`btn ${
+                active === "dresses" ? "btn-active" : "btn-secondary"
+              }`}
+              onClick={() => handleClick("dresses")}
+            >
+              Shop Dresses
+            </button>
           </div>
         </div>
       </div>

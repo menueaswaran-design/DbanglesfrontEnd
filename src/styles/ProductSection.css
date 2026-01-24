@@ -22,7 +22,7 @@
 .section-line {
   width: 80px;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(90deg, var(--primary-color), #06b6d4);
   margin: 0 auto var(--spacing-md);
   border-radius: var(--radius-lg);
 }
@@ -96,7 +96,7 @@
 }
 
 .category-btn.active {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  background: linear-gradient(135deg, var(--primary-color), #06b6d4);
   color: white;
   border-color: var(--primary-color);
   box-shadow: var(--shadow-md);

@@ -1,61 +1,41 @@
-import React, { useState } from 'react';
-import '../styles/ProductCard.css';
+import React, { useState } from "react";
+import { useCart } from "./CartContext";
+import "../styles/ProductCard.css";
 
-function ProductCard({ product }) {
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+function ProductCard({ product, onView }) {
+  const [message, setMessage] = useState(null);
+  const { cart, addToCart } = useCart();
 
   const discount = Math.round(
-    ((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100
+    ((product.originalPrice - product.discountedPrice) /
+      product.originalPrice) *
+      100
   );
 
-  const showToast = (message, type = 'success') => {
-    setToast({ show: true, message, type });
+  const showMessage = (text, type) => {
+    setMessage({ text, type });
     setTimeout(() => {
-      setToast({ show: false, message: '', type });
-    }, 1800);
+      setMessage(null);
+    }, 4000);
   };
 
-  const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    const alreadyExists = cart.some(item => item.id === product.id);
-    if (alreadyExists) {
-      showToast('Already in cart', 'error');
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    if (cart.some((item) => item.id === product.id)) {
+      showMessage("Already in cart", "error");
       return;
     }
-
-    const updatedCart = [...cart, { ...product, quantity: 1 }];
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-
-    showToast('Added to cart', 'success');
+    addToCart(product);
+    showMessage("Added to cart", "success");
   };
 
   return (
-    <div className="product-card" style={{ position: 'relative' }}>
-      
-      {/* Toast */}
-      {toast.show && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 10,
-            right: 10,
-            padding: '8px 14px',
-            borderRadius: 20,
-            fontSize: 13,
-            fontWeight: 500,
-            color: '#fff',
-            background:
-              toast.type === 'success' ? '#22c55e' : '#ef4444',
-            boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
-            animation: 'fadeInOut 1.8s ease',
-            zIndex: 10
-          }}
-        >
-          {toast.message}
-        </div>
-      )}
-
+    <div
+      className="product-card"
+      style={{ position: "relative", cursor: "pointer" }}
+      onClick={() => onView && onView(product)}
+    >
       <div className="product-image-container">
         <img
           src={product.image}
@@ -70,11 +50,59 @@ function ProductCard({ product }) {
         <p className="product-description">{product.description}</p>
 
         <div className="product-price">
-          <span className="original-price">₹{product.originalPrice}</span>
-          <span className="discounted-price">₹{product.discountedPrice}</span>
+          <span className="original-price">
+            ₹{product.originalPrice}
+          </span>
+          <span className="discounted-price">
+            ₹{product.discountedPrice}
+          </span>
         </div>
 
-        <button className="add-to-cart-btn" onClick={handleAddToCart}>
+        {/* ✅ Message above button */}
+        {message && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              marginBottom: "10px",
+              fontSize: "14px",
+              fontWeight: "500",
+              color:
+                message.type === "success"
+                  ? "#22c55e"
+                  : "#ef4444",
+            }}
+          >
+            {/* Circle Tick */}
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "50%",
+                backgroundColor:
+                  message.type === "success"
+                    ? "#22c55e"
+                    : "#ef4444",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
+            >
+              ✓
+            </div>
+
+            {message.text}
+          </div>
+        )}
+
+        <button
+          className="add-to-cart-btn"
+          onClick={handleAddToCart}
+        >
           <svg
             width="18"
             height="18"
@@ -90,18 +118,6 @@ function ProductCard({ product }) {
           Add to Cart
         </button>
       </div>
-
-      {/* Animation */}
-      <style>
-        {`
-          @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(-6px); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; }
-            100% { opacity: 0; transform: translateY(-6px); }
-          }
-        `}
-      </style>
     </div>
   );
 }
