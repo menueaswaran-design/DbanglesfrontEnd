@@ -8,7 +8,7 @@ import ProductSection from './components/ProductSection';
 import Cart from './components/Cart';
 import { CartProvider } from './components/CartContext';
 import './App.css';
-import ProductModal from './components/ProductModal';
+import ProductModal from './components/Productmodal';
 
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
