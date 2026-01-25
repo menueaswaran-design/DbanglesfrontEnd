@@ -112,19 +112,21 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems, onSuccess }) => {
                 onChange={handleChange}
               />
             </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="form-col">
-            <div className="input-group">
+             <div className="input-group">
               <label>Delivery Address *</label>
-              <input
+              <textarea
+                rows={3}
                 name="deliveryAddress"
                 placeholder="House / Street / Area"
                 value={form.deliveryAddress}
                 onChange={handleChange}
               />
             </div>
+          </div>
+
+          {/* RIGHT */}
+          <div className="form-col">
+           
 
             <div className="input-group">
               <label>Landmark</label>
@@ -160,7 +162,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems, onSuccess }) => {
             <div className="input-group">
               <label>Order Message (optional)</label>
               <textarea
-                rows={2}
+                rows={3}
                 name="orderMessage"
                 placeholder="Any special instructions"
                 value={form.orderMessage}

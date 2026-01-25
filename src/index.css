@@ -118,11 +118,11 @@ html {
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 2px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-light);
+  background: var(--primary-light);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -131,7 +131,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-color);
+  background: var(--primary-light);
 }
 
 /* Loading Animation */

@@ -6,7 +6,7 @@ import CheckoutForm from "./CheckoutForm";
 
 
 // ==================== CART COMPONENT ====================
-const Cart = ({ cartItems, updateCart, onCheckout }) => {
+const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
   const increaseQty = (id) => {
     updateCart(
       cartItems.map((item) =>
@@ -47,8 +47,9 @@ const Cart = ({ cartItems, updateCart, onCheckout }) => {
   return (
     <>
      
-    <Navbar/>
- 
+    {!showCheckout && <Navbar />}
+
+    {/* Cart Content - outside Navbar */}
     <div className="cart-container">
       <div className="items-list-section">
         <h1 className="page-title">Shopping Cart</h1>
@@ -257,13 +258,14 @@ export default function CombinedCartCheckout() {
 
   return (
     <div className="app-shell">
-      <div className="nav-container"><Navbar /></div>
+      
       
       <main className="main-view">
         <Cart
           cartItems={cartItems}
           updateCart={updateCart}
           onCheckout={() => setShowCheckout(true)}
+          showCheckout={showCheckout}
         />
       </main>
 
@@ -301,7 +303,7 @@ export default function CombinedCartCheckout() {
         }
 
         /* Cart Items */
-        .page-title { fontSize: 26px; font-weight: 700; margin-bottom: 24px; }
+        .page-title { fontSize: 20px; font-weight: 600; margin-Top: 55px;  margin-bottom: 20px; }
         .items-stack { display: flex; flex-direction: column; gap: 12px; }
         .cart-item-card { 
           background: #fff; border-radius: 14px; padding: 14px; 
@@ -310,7 +312,7 @@ export default function CombinedCartCheckout() {
         .item-img { width: 100px; height: 100px; border-radius: 10px; object-fit: cover; background: #f0f0f0; }
         .item-details { flex: 1; }
         .item-name { font-size: 15px; font-weight: 700; margin: 0 0 8px 0; }
-        .current-price { color: #764ba2; font-weight: 700; font-size: 16px; margin-right: 8px; }
+        .current-price { color: #0f766e; font-weight: 700; font-size: 16px; margin-right: 8px; }
         .old-price { color: #bbb; text-decoration: line-through; font-size: 13px; }
         
         /* Controls */
@@ -318,7 +320,7 @@ export default function CombinedCartCheckout() {
         .qty-controls { display: flex; align-items: center; background: #f3f0fa; padding: 4px; border-radius: 8px; }
         .qty-btn { width: 28px; height: 28px; border: none; background: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .qty-num { width: 30px; text-align: center; font-weight: 600; }
-        .remove-btn { border: none; background: #fbe9f7; color: #d72660; padding: 8px; border-radius: 8px; cursor: pointer; }
+        .remove-btn { border: none; background: #fbe9f7; color: #0f766e; padding: 8px; border-radius: 8px; cursor: pointer; }
 
         /* Summary Card */
         .summary-card { 
@@ -328,26 +330,104 @@ export default function CombinedCartCheckout() {
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666; }
         .total-divider { border-top: 2px solid #eee; margin-top: 15px; padding-top: 15px; }
         .total-row { display: flex; justify-content: space-between; align-items: center; }
-        .total-value { font-size: 22px; font-weight: 700; color: #764ba2; }
+        .total-value { font-size: 22px; font-weight: 700; color: #0f766e; }
         .checkout-btn { 
           width: 100%; margin-top: 20px;  margin-bottom: 20px; padding: 14px; border: none; border-radius: 10px;
-          background: linear-gradient(135deg, #764ba2, #667eea); color: #fff; font-weight: 700; cursor: pointer;
+          background: linear-gradient(135deg, #0f766e, #2dd4bf); color: #fff; font-weight: 700; cursor: pointer;
         }
 
-        /* Modal / Form */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
-        .modal-content { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 15px; right: 15px; border: none; background: none; cursor: pointer; }
-        .form-grid { display: flex; flex-wrap: wrap; gap: 20px; }
-        .form-col { flex: 1 1 250px; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
-        .input-group input, .input-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .confirm-btn { width: 100%; padding: 15px; background: #764ba2; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+       .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 12px;
+}
 
-        /* Empty State */
-        .empty-cart { text-align: center; padding: 100px 20px; }
-        .empty-icon { font-size: 60px; }
+.modal-content {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.form-col {
+  flex: 1 1 260px;
+}
+
+.input-group {
+  margin-bottom: 14px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  outline: none;
+  border-color: #ffffff;
+}
+
+.confirm-btn {
+  width: 100%;
+  padding: 14px;
+  background: #0f766e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
       `}</style>
     </div>
   );
