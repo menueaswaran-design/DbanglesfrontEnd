@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import scanner from "../assets/scanner.jpeg";
-import "../styles/Payment.css";
+import "../styles/payment.css";
 
 function Payment({ phoneNumber }) {
   const [orderId, setOrderId] = useState("");
