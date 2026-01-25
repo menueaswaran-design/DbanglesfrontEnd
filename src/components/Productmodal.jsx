@@ -36,20 +36,30 @@ function ProductModal() {
   };
 
   const handleShare = async () => {
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: "Check this product",
-        text: "Look at this amazing product!",
-        url: window.location.href,
-      });
-    } catch (error) {
-      console.log("Sharing failed", error);
+    if (!product) return;
+    const shareTitle = `DBangles | ${product.name}`;
+    const shareText = `Discover "${product.name}" for just ₹${product.discountedPrice} (was ₹${product.originalPrice}).\n\n${product.description}\n\nShop now at DBangles!`;
+    const shareUrl = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.log("Sharing failed", error);
+      }
+    } else {
+      // Fallback: copy link to clipboard
+      try {
+        await navigator.clipboard.writeText(`${shareTitle}\n${shareText}\n${shareUrl}`);
+        alert("Share link copied to clipboard!");
+      } catch {
+        alert("Sharing not supported on this browser");
+      }
     }
-  } else {
-    alert("Sharing not supported on this browser");
-  }
-};
+  };
 
 
   const fetchRelatedProducts = async () => {
