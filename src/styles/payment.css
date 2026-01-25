@@ -1,36 +1,5 @@
 /* ================= Skeleton Loader ================= */
 
-
-.phone-input-box {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.phone-input {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 13px;
-  width: 150px;
-}
-
-.getid-btn {
-  padding: 6px 12px;
-  border: none;
-  background: #000;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.getid-btn:hover {
-  opacity: 0.85;
-}
-
-
 .payment-skeleton-id {
   width: 120px;
   height: 18px;

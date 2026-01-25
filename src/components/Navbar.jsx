@@ -5,6 +5,7 @@ import "../styles/Navbar.css";
 
 function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cart } = useCart();
   const cartCount = cart.length;
   const navigate = useNavigate();
@@ -33,6 +34,18 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
             <li><a href="#bangles">Bangles</a></li>
             <li><a href="#dresses">Dresses</a></li>
           </ul>
+
+          {/* Hamburger menu for mobile */}
+          <button
+            className="hamburger-menu mobile-only"
+            aria-label="Open menu"
+            style={{ display: 'none' }}
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          >
+            <span className="hamburger-bar"></span>
+            <span className="hamburger-bar"></span>
+            <span className="hamburger-bar"></span>
+          </button>
 
           <div className="navbar-actions">
             {/* SEARCH – DESKTOP ONLY */}
@@ -87,6 +100,20 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
           </div>
         </div>
       </nav>
+
+      {/* ================= MOBILE MENU OVERLAY ================= */}
+      {isMobileMenuOpen && (
+        <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="mobile-menu" onClick={e => e.stopPropagation()}>
+            <button className="close-mobile-menu" onClick={() => setIsMobileMenuOpen(false)}>&times;</button>
+            <ul>
+              <li><a href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</a></li>
+              <li><a href="#bangles" onClick={() => setIsMobileMenuOpen(false)}>Bangles</a></li>
+              <li><a href="#dresses" onClick={() => setIsMobileMenuOpen(false)}>Dresses</a></li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* ================= MOBILE BOTTOM NAV ================= */}
       <div className="mobile-bottom-nav">

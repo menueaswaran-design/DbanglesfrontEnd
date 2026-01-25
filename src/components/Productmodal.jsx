@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { Share2 } from "lucide-react";
 import { useCart } from "./CartContext";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProductModal.css";
+import WhatsappFloatingButton from "./WhatsappFloatingButton";
 import Navbar from "./Navbar";
 
 function ProductModal() {
@@ -32,6 +34,23 @@ function ProductModal() {
       setLoading(false);
     }
   };
+
+  const handleShare = async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Check this product",
+        text: "Look at this amazing product!",
+        url: window.location.href,
+      });
+    } catch (error) {
+      console.log("Sharing failed", error);
+    }
+  } else {
+    alert("Sharing not supported on this browser");
+  }
+};
+
 
   const fetchRelatedProducts = async () => {
     try {
@@ -93,15 +112,22 @@ function ProductModal() {
   return (
     <div className="productmodal-page">
       <Navbar />
+       <WhatsappFloatingButton />
       <div className="productmodal-container">
+
         <div className="productmodal-image-section">
-          <div className="productmodal-image-wrapper">
+          <div className="productmodal-image-wrapper" style={{ position: "relative" }}>
             <img src={product.image} alt={product.name} />
+            <button onClick={handleShare} className="share-icon-btn">
+              <Share2 size={22} />
+            </button>
           </div>
         </div>
 
         <div className="productmodal-info-section">
           <p className="productmodal-category">{product.category}</p>
+        {/* Share button moved to image top right */}
+
           <h2 className="productmodal-title">{product.name}</h2>
           <div className="productmodal-description-box">
             <p className="productmodal-description-text">{product.description}</p>

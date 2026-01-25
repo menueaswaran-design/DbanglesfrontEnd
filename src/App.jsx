@@ -10,6 +10,7 @@ import { CartProvider } from './components/CartContext';
 import './App.css';
 import ProductModal from './components/Productmodal';
 import Loader from './components/Loader';
+import WhatsappFloatingButton from './components/WhatsappFloatingButton';
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [productsData, setProductsData] = useState({ bangles: [], dresses: [] });
@@ -92,6 +93,7 @@ function AppContent() {
         <main className="main-content">
           <div style={{ paddingTop: 80 }}><Loader text="Loading products..." /></div>
         </main>
+        <WhatsappFloatingButton />
       </div>
     );
   }
@@ -105,6 +107,7 @@ function AppContent() {
         <main className="main-content">
           <div className="error">Error: {error}</div>
         </main>
+        <WhatsappFloatingButton />
       </div>
     );
   }
@@ -132,6 +135,7 @@ function AppContent() {
       <footer className="footer">
         <p>&copy; 2026 DBangles - Handmade Elegance. All rights reserved.</p>
       </footer>
+      <WhatsappFloatingButton />
     </div>
   );
 }

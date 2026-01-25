@@ -1,46 +1,48 @@
-import React, { useState } from "react";
+import React from "react";
 import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
 import CheckoutForm from "./CheckoutForm";
 import { useLocation } from "react-router-dom";
+import { useCart } from "./CartContext";
+import {useState} from "react";
+import WhatsappFloatingButton from "./WhatsappFloatingButton";
 // ==================== NAVBAR (Placeholder) ====================
 
 
 // ==================== CART COMPONENT ====================
-const Cart = ({ cartItems, updateCart, onCheckout, showCheckout }) => {
+const Cart = ({ onCheckout, showCheckout }) => {
   const location = useLocation();
+  const { cart, removeFromCart } = useCart();
   const buyNowProduct = location.state?.product;
 
   // ✅ If Buy Now exists → override cart display
   const displayItems = buyNowProduct
     ? [{ ...buyNowProduct, quantity: 1 }]
-    : cartItems;
+    : cart;
 
   const increaseQty = (id) => {
-    if (buyNowProduct) return; // prevent editing buy-now temp product
-
-    updateCart(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+    if (buyNowProduct) return;
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
+    localStorage.setItem("cart", JSON.stringify(updated));
+    window.dispatchEvent(new Event("storage"));
   };
 
   const decreaseQty = (id) => {
     if (buyNowProduct) return;
-
-    updateCart(
-      cartItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+    const updated = cart.map((item) =>
+      item.id === id && item.quantity > 1
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
     );
+    localStorage.setItem("cart", JSON.stringify(updated));
+    window.dispatchEvent(new Event("storage"));
   };
 
   const removeItem = (id) => {
     if (buyNowProduct) return;
-    updateCart(cartItems.filter((item) => item.id !== id));
+    removeFromCart(id);
   };
 
   const totalOriginal = displayItems.reduce(
@@ -61,6 +63,7 @@ const Cart = ({ cartItems, updateCart, onCheckout, showCheckout }) => {
     return (
       <div className="empty-cart">
         <Navbar />
+         <WhatsappFloatingButton />
         <div className="empty-icon">🛒</div>
         <h2 className="empty-title">Your cart is empty</h2>
         <p className="empty-text">Add some products to get started</p>
@@ -73,6 +76,7 @@ const Cart = ({ cartItems, updateCart, onCheckout, showCheckout }) => {
       {!showCheckout && <Navbar />}
 
       <div className="cart-container">
+         
         <div className="items-list-section">
           <h1 className="page-title">Shopping Cart</h1>
           <div className="items-stack">

@@ -116,3 +116,30 @@
   .productmodal-image-wrapper { max-width: 100%; }
   .productmodal-related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
 }
+
+/* Share Button */
+
+.share-icon-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.2s, transform 0.2s;
+  z-index: 2;
+}
+.share-icon-btn:hover {
+  background: #e0f7fa;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+  transform: scale(1.08);
+}
+.share-icon-btn:active {
+  transform: scale(0.96);
+}
