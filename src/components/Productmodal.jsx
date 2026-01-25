@@ -125,7 +125,7 @@ function ProductModal() {
               }
               setTimeout(() => setCartMessage(""), 2000);
             }}>Add to Cart</button>
-            <button className="productmodal-buy-btn">Buy Now</button>
+            <button onClick={() => { navigate('/cart', { state: { product: { ...product, selectedSize } } })}} className="productmodal-buy-btn">Buy Now</button>
           </div>
           {cartMessage && <p className="productmodal-cart-feedback">{cartMessage}</p>}
         </div>

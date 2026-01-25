@@ -2,12 +2,23 @@ import React, { useState } from "react";
 import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
 import CheckoutForm from "./CheckoutForm";
+import { useLocation } from "react-router-dom";
 // ==================== NAVBAR (Placeholder) ====================
 
 
 // ==================== CART COMPONENT ====================
-const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
+const Cart = ({ cartItems, updateCart, onCheckout, showCheckout }) => {
+  const location = useLocation();
+  const buyNowProduct = location.state?.product;
+
+  // ✅ If Buy Now exists → override cart display
+  const displayItems = buyNowProduct
+    ? [{ ...buyNowProduct, quantity: 1 }]
+    : cartItems;
+
   const increaseQty = (id) => {
+    if (buyNowProduct) return; // prevent editing buy-now temp product
+
     updateCart(
       cartItems.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
@@ -16,6 +27,8 @@ const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
   };
 
   const decreaseQty = (id) => {
+    if (buyNowProduct) return;
+
     updateCart(
       cartItems.map((item) =>
         item.id === id && item.quantity > 1
@@ -26,27 +39,28 @@ const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
   };
 
   const removeItem = (id) => {
+    if (buyNowProduct) return;
     updateCart(cartItems.filter((item) => item.id !== id));
   };
 
-
-  const totalOriginal = cartItems.reduce(
+  const totalOriginal = displayItems.reduce(
     (sum, item) => sum + item.originalPrice * item.quantity,
     0
   );
-  const totalDiscounted = cartItems.reduce(
+
+  const totalDiscounted = displayItems.reduce(
     (sum, item) => sum + item.discountedPrice * item.quantity,
     0
   );
+
   const totalDiscount = totalOriginal - totalDiscounted;
-  const shipping = cartItems.length > 0 ? 50 : 0;
+  const shipping = displayItems.length > 0 ? 50 : 0;
   const grandTotal = totalDiscounted + shipping;
 
-  if (cartItems.length === 0) {
+  if (displayItems.length === 0) {
     return (
-    
       <div className="empty-cart">
-          <Navbar/>
+        <Navbar />
         <div className="empty-icon">🛒</div>
         <h2 className="empty-title">Your cart is empty</h2>
         <p className="empty-text">Add some products to get started</p>
@@ -56,91 +70,170 @@ const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
 
   return (
     <>
-     
-    {!showCheckout && <Navbar />}
+      {!showCheckout && <Navbar />}
 
-    {/* Cart Content - outside Navbar */}
-    <div className="cart-container">
-      <div className="items-list-section">
-        <h1 className="page-title">Shopping Cart</h1>
-        <div className="items-stack">
-          {cartItems.map((item) => (
-            <div key={item.id} className="cart-item-card">
-              <img src={item.image} alt={item.name} className="item-img" />
-              <div className="item-details">
-                <h3 className="item-name">{item.name}</h3>
-                <div className="price-row">
-                  <span className="current-price">₹{item.discountedPrice}</span>
-                  <span className="old-price">₹{item.originalPrice}</span>
+      <div className="cart-container">
+        <div className="items-list-section">
+          <h1 className="page-title">Shopping Cart</h1>
+          <div className="items-stack">
+            {displayItems.map((item) => (
+              <div key={item.id} className="cart-item-card">
+                <img src={item.image} alt={item.name} className="item-img" />
+                <div className="item-details">
+                  <h3 className="item-name">{item.name}</h3>
+                  <div className="price-row">
+                    <span className="current-price">
+                      ₹{item.discountedPrice}
+                    </span>
+                    <span className="old-price">
+                      ₹{item.originalPrice}
+                    </span>
+                  </div>
+                  <div className="subtotal-text">
+                    Subtotal:{" "}
+                    <strong>
+                      ₹{item.discountedPrice * item.quantity}
+                    </strong>
+                  </div>
                 </div>
-                <div className="subtotal-text">
-                  Subtotal: <strong>₹{item.discountedPrice * item.quantity}</strong>
-                </div>
-              </div>
-              <div className="item-actions">
-                <div className="qty-controls">
-                  <button onClick={() => decreaseQty(item.id)} className="qty-btn">−</button>
-                  <span className="qty-num">{item.quantity}</span>
-                  <button onClick={() => increaseQty(item.id)} className="qty-btn">+</button>
-                </div>
-                <button className="remove-btn" onClick={() => removeItem(item.id)}>
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="summary-section">
-        <div className="summary-card">
-          <h2 className="summary-title">Order Summary</h2>
-          <div className="summary-line-items">
-            {cartItems.map((item) => (
-              <div key={item.id} className="summary-line">
-                <span>{item.name} (x{item.quantity})</span>
-                <span>
-                  <span style={{ textDecoration: 'line-through', color: '#bbb', marginRight: 6 }}>
-                    ₹{item.originalPrice * item.quantity}
-                  </span>
-                  <span style={{ color: '#0f766e', fontWeight: 600, fontSize: '15px' }}>
-                    ₹{item.discountedPrice * item.quantity}
-                  </span>
-                </span>
+                {/* ❗ Disable controls only if Buy Now */}
+                <div className="item-actions">
+                  <div className="qty-controls">
+                    <button
+                      onClick={() => decreaseQty(item.id)}
+                      className="qty-btn"
+                      disabled={!!buyNowProduct}
+                    >
+                      −
+                    </button>
+                    <span className="qty-num">{item.quantity}</span>
+                    <button
+                      onClick={() => increaseQty(item.id)}
+                      className="qty-btn"
+                      disabled={!!buyNowProduct}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {!buyNowProduct && (
+                    <button
+                      className="remove-btn"
+                      onClick={() => removeItem(item.id)}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
-          <div className="total-divider">
-            <div className="total-row">
-              <span className="total-label">Original Total</span>
-              <span className="total-value" style={{ textDecoration: 'line-through', color: '#bbb', fontSize: '15px' }}>₹{totalOriginal}</span>
+        </div>
+
+        <div className="summary-section">
+          <div className="summary-card">
+            <h2 className="summary-title">Order Summary</h2>
+
+            <div className="summary-line-items">
+              {displayItems.map((item) => (
+                <div key={item.id} className="summary-line">
+                  <span>
+                    {item.name} (x{item.quantity})
+                  </span>
+                  <span>
+                    <span
+                      style={{
+                        textDecoration: "line-through",
+                        color: "#bbb",
+                        marginRight: 6,
+                      }}
+                    >
+                      ₹{item.originalPrice * item.quantity}
+                    </span>
+                    <span
+                      style={{
+                        color: "#0f766e",
+                        fontWeight: 600,
+                        fontSize: "15px",
+                      }}
+                    >
+                      ₹{item.discountedPrice * item.quantity}
+                    </span>
+                  </span>
+                </div>
+              ))}
             </div>
-            <div className="total-row">
-              <span className="total-label">Discount</span>
-              <span className="total-value" style={{ color: '#ef4444', fontSize: '15px' }}>-₹{totalDiscount}</span>
+
+            <div className="total-divider">
+              <div className="total-row">
+                <span className="total-label">Original Total</span>
+                <span
+                  className="total-value"
+                  style={{
+                    textDecoration: "line-through",
+                    color: "#bbb",
+                    fontSize: "15px",
+                  }}
+                >
+                  ₹{totalOriginal}
+                </span>
+              </div>
+
+              <div className="total-row">
+                <span className="total-label">Discount</span>
+                <span
+                  className="total-value"
+                  style={{ color: "#ef4444", fontSize: "15px" }}
+                >
+                  -₹{totalDiscount}
+                </span>
+              </div>
+
+              <div className="total-row">
+                <span className="total-label">Subtotal</span>
+                <span className="total-value" style={{ fontSize: "15px" }}>
+                  ₹{totalDiscounted}
+                </span>
+              </div>
+
+              <div className="total-row">
+                <span className="total-label">Shipping</span>
+                <span className="total-value" style={{ fontSize: "15px" }}>
+                  ₹{shipping}
+                </span>
+              </div>
+
+              <div
+                className="total-row"
+                style={{
+                  fontWeight: 700,
+                  fontSize: "16px",
+                  borderTop: "2px solid #eee",
+                  marginTop: 10,
+                  paddingTop: 10,
+                }}
+              >
+                <span className="total-label">Grand Total</span>
+                <span
+                  className="total-value"
+                  style={{ color: "#0f766e", fontSize: "17px" }}
+                >
+                  ₹{grandTotal}
+                </span>
+              </div>
             </div>
-            <div className="total-row">
-              <span className="total-label">Subtotal</span>
-              <span className="total-value" style={{ fontSize: '15px' }}>₹{totalDiscounted}</span>
-            </div>
-            <div className="total-row">
-              <span className="total-label">Shipping</span>
-              <span className="total-value" style={{ fontSize: '15px' }}>₹{shipping}</span>
-            </div>
-            <div className="total-row" style={{ fontWeight: 700, fontSize: '16px', borderTop: '2px solid #eee', marginTop: 10, paddingTop: 10 }}>
-              <span className="total-label">Grand Total</span>
-              <span className="total-value" style={{ color: '#0f766e', fontSize: '17px' }}>₹{grandTotal}</span>
-            </div>
+
+            <button className="checkout-btn" onClick={onCheckout}>
+              Proceed to Checkout
+            </button>
           </div>
-          <button className="checkout-btn" onClick={onCheckout}>
-            Proceed to Checkout
-          </button>
         </div>
       </div>
-    </div>
     </>
   );
 };
+
 // const CheckoutForm = ({ showCheckout, onClose, cartItems, onSuccess }) => {
 //   const [isSubmitting, setIsSubmitting] = useState(false);
 //   const [form, setForm] = useState({

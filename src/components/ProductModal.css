@@ -52,7 +52,7 @@
 .productmodal-buy-btn { background: #ff9f00; color: #fff; flex: 1; padding: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; border: none; }
 
 /* --- RELATED PRODUCTS (IMPROVED LAYOUT) --- */
-.productmodal-related-section { border-top: 1px solid #f0f0f0; padding-top: 40px; margin-top: 60px; }
+.productmodal-related-section { border-top: 1px solid #f0f0f0; padding-top: 10px; margin-top: 60px; }
 .productmodal-related-heading { font-size: 22px; font-weight: 700; margin-bottom: 30px; }
 
 .productmodal-related-grid {

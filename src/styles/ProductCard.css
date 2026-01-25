@@ -144,6 +144,18 @@
 
 /* ---------------- Button ---------------- */
 
+.add-to-cart-btn.added {
+  background: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+  border: 1px solid #d1d5db;
+}
+
+.add-to-cart-btn:disabled {
+  pointer-events: none;
+}
+
+
 .add-to-cart-btn {
   width: 100%;
   margin-top: var(--spacing-sm);
