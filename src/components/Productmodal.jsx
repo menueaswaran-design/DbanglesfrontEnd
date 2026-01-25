@@ -3,57 +3,43 @@ import { useCart } from "./CartContext";
 import { useParams, useNavigate } from "react-router-dom";
 import "./ProductModal.css";
 import Navbar from "./Navbar";
-import Loader from "./Loader";
 
 function ProductModal() {
   const { productid } = useParams();
   const navigate = useNavigate();
   
   const [product, setProduct] = useState(null);
-  const [relatedProducts, setRelatedProducts] = useState([])
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart, cart } = useCart();
   const [cartMessage, setCartMessage] = useState("");
+  
+  const bangleSizes = ["2.2", "2.4", "2.6", "2.8", "2.10"];
+  const [selectedSize, setSelectedSize] = useState("2.6");
+
   const fetchproductbyId = async () => {
+    setLoading(true); 
     try {
       const response = await fetch(`https://dbangles.vercel.app/api/products/${productid}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch product");
-      }
+      if (!response.ok) throw new Error("Failed to fetch product");
       const data = await response.json();
       setProduct(data.product);
+      // Fetch related after product is found
+      fetchRelatedProducts();
       setLoading(false);
-    //   let related = allProducts.filter(
-    //   (item) =>
-    //     item.category === product.category &&
-    //     String(item._id || item.id) !== String(productid)
-    // );
-
-    // if (related.length === 0) {
-    //   related = allProducts.filter(
-    //     (item) =>
-    //       String(item._id || item.id) !== String(productid)
-    //   );
-    // }
-
-    // setRelatedProducts(related.slice(0, 6));
     } catch (error) {
-      console.error("Error fetching product by ID:", error);
-      return null;
+      console.error("Error fetching product:", error);
+      setLoading(false);
     }
-    
   };
 
-  const fetchRelatedProducts = async (category) => {
+  const fetchRelatedProducts = async () => {
     try {
       const response = await fetch(`https://dbangles.vercel.app/api/products`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch related products");
-      }
+      if (!response.ok) throw new Error("Failed to fetch related products");
       const data = await response.json();
       let related = data.products.filter(
-        (item) =>
-          String(item._id || item.id) !== String(productid)
+        (item) => String(item._id || item.id) !== String(productid)
       );
       setRelatedProducts(related.slice(0, 6));
     } catch (error) {
@@ -62,112 +48,104 @@ function ProductModal() {
   };
 
   useEffect(() => {
-   fetchproductbyId()
-   fetchRelatedProducts()
-},[productid]);
+    window.scrollTo(0, 0);
+    fetchproductbyId();
+  }, [productid]);
 
-    
-
-    
-
-
+  // FULL PAGE SHIMMER
   if (loading) {
-      return (
-        <>
-        <Navbar/>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <Loader />
-        </div></>
-      );
-    }
+    return (
+      <div className="productmodal-page">
+        <Navbar />
+        <div className="productmodal-container shimmer-active">
+          <div className="productmodal-image-section">
+            <div className="productmodal-image-wrapper shimmer-box"></div>
+          </div>
+          <div className="productmodal-info-section">
+            <div className="shimmer-line short"></div>
+            <div className="shimmer-line long"></div>
+            <div className="shimmer-line full" style={{height: '100px', margin: '20px 0'}}></div>
+            <div className="shimmer-line medium"></div>
+            <div className="productmodal-button-group">
+              <div className="shimmer-btn"></div>
+              <div className="shimmer-btn"></div>
+            </div>
+          </div>
+        </div>
+        <div className="productmodal-related-section">
+          <div className="shimmer-line short"></div>
+          <div className="productmodal-related-grid">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="productmodal-related-card">
+                <div className="productmodal-rel-img-wrapper shimmer-box"></div>
+                <div className="shimmer-line long"></div>
+                <div className="shimmer-line short"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const discount = Math.round(
-    ((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100
-  );
+  const discount = Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100);
 
   return (
-    
-    <div className="product-page">
-        
-      {/* MAIN PRODUCT SECTION */}
-      <div className="product-container">
-        <div className="product-image-section">
-          <div className="image-wrapper">
+    <div className="productmodal-page">
+      <Navbar />
+      <div className="productmodal-container">
+        <div className="productmodal-image-section">
+          <div className="productmodal-image-wrapper">
             <img src={product.image} alt={product.name} />
-            {discount > 0 && (
-              <div className="discount-badge">-{discount}%</div>
-            )}
           </div>
         </div>
 
-        <div className="product-info-section">
-          <p className="category">{product.category}</p>
-          <h2>{product.name}</h2>
-
-          <div className="product-price">
-            <span className="discounted">₹{product.discountedPrice.toLocaleString()}</span>
-            <span className="original">₹{product.originalPrice.toLocaleString()}</span>
+        <div className="productmodal-info-section">
+          <p className="productmodal-category">{product.category}</p>
+          <h2 className="productmodal-title">{product.name}</h2>
+          <div className="productmodal-description-box">
+            <p className="productmodal-description-text">{product.description}</p>
           </div>
 
-          <div className="price-info">
-            <span className="save-amount">
-              You save ₹{(product.originalPrice - product.discountedPrice).toLocaleString()}
-            </span>
-              <Navbar />
+          <div className="productmodal-price-row">
+            <span className="productmodal-discounted">₹{product.discountedPrice}</span>
+            <span className="productmodal-original">₹{product.originalPrice}</span>
+            {discount > 0 && <span className="productmodal-percent">{discount}% OFF</span>}
           </div>
 
-          <p className="description">{product.description}</p>
+          <p className="productmodal-save-text">Inclusive of all taxes. You save ₹{product.originalPrice - product.discountedPrice}</p>
 
-          <div className="button-group">
-            <button
-              className="product-add-btn"
-              onClick={() => {
-                if (cart.some((item) => item.id === product.id)) {
-                  setCartMessage("Already in cart");
-                } else {
-                  addToCart(product);
-                  setCartMessage("Added to cart");
-                }
-                setTimeout(() => setCartMessage(""), 2000);
-              }}
-            >
-              Add to Cart
-            </button>
-            {cartMessage && (
-              <div style={{ color: cartMessage === "Added to cart" ? "green" : "red", marginTop: 8, fontWeight: 500 }}>
-                {cartMessage}
-              </div>
-            )}
-            <button className="product-wishlist-btn">Buy Now</button>
+          <div className="productmodal-button-group">
+            <button className="productmodal-add-btn" onClick={() => {
+              if (cart.some(item => item.id === product.id)) {
+                setCartMessage("Already in cart");
+              } else {
+                addToCart({ ...product, selectedSize });
+                setCartMessage("Added to cart");
+              }
+              setTimeout(() => setCartMessage(""), 2000);
+            }}>Add to Cart</button>
+            <button className="productmodal-buy-btn">Buy Now</button>
           </div>
-
-          
+          {cartMessage && <p className="productmodal-cart-feedback">{cartMessage}</p>}
         </div>
       </div>
 
-      {/* RELATED PRODUCTS SECTION */}
       {relatedProducts.length > 0 && (
-        <div className="related-section">
-          <h3>Related Products</h3>
-
-          <div className="related-grid">
+        <div className="productmodal-related-section">
+          <h3 className="productmodal-related-heading">Related Products</h3>
+          <div className="productmodal-related-grid">
             {relatedProducts.map((item) => (
-              <div
-                key={item._id || item.id}
-                className="related-card"
-                onClick={() => navigate(`/product/${item._id || item.id}`)}
-              >
-                <div className="related-image-wrapper">
+              <div key={item._id || item.id} className="productmodal-related-card" onClick={() => navigate(`/product/${item._id || item.id}`)}>
+                <div className="productmodal-rel-img-wrapper">
                   <img src={item.image} alt={item.name} />
                 </div>
-                <p className="related-name">{item.name}</p>
-                <div className="related-price">
-                  <span className="related-discounted">
-                    ₹{item.discountedPrice.toLocaleString()}
-                  </span>
-                  <span className="related-original">
-                    ₹{item.originalPrice.toLocaleString()}
-                  </span>
+                <div className="productmodal-rel-info">
+                   <p className="productmodal-rel-name">{item.name}</p>
+                   <div className="productmodal-rel-price">
+                    <span className="productmodal-rel-disc">₹{item.discountedPrice}</span>
+                    <span className="productmodal-rel-orig">₹{item.originalPrice}</span>
+                  </div>
                 </div>
               </div>
             ))}

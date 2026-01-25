@@ -90,7 +90,7 @@ function AppContent() {
         <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <Hero />
         <main className="main-content">
-          <div style={{ paddingTop: 40 }}><Loader text="Loading products..." /></div>
+          <div style={{ paddingTop: 80 }}><Loader text="Loading products..." /></div>
         </main>
       </div>
     );

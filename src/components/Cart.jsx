@@ -29,14 +29,24 @@ const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
     updateCart(cartItems.filter((item) => item.id !== id));
   };
 
-  const totalPrice = cartItems.reduce(
+
+  const totalOriginal = cartItems.reduce(
+    (sum, item) => sum + item.originalPrice * item.quantity,
+    0
+  );
+  const totalDiscounted = cartItems.reduce(
     (sum, item) => sum + item.discountedPrice * item.quantity,
     0
   );
+  const totalDiscount = totalOriginal - totalDiscounted;
+  const shipping = cartItems.length > 0 ? 50 : 0;
+  const grandTotal = totalDiscounted + shipping;
 
   if (cartItems.length === 0) {
     return (
+    
       <div className="empty-cart">
+          <Navbar/>
         <div className="empty-icon">🛒</div>
         <h2 className="empty-title">Your cart is empty</h2>
         <p className="empty-text">Add some products to get started</p>
@@ -61,7 +71,7 @@ const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
                 <h3 className="item-name">{item.name}</h3>
                 <div className="price-row">
                   <span className="current-price">₹{item.discountedPrice}</span>
-                  <span className="old-price">₹{Math.round(item.discountedPrice * 1.25)}</span>
+                  <span className="old-price">₹{item.originalPrice}</span>
                 </div>
                 <div className="subtotal-text">
                   Subtotal: <strong>₹{item.discountedPrice * item.quantity}</strong>
@@ -89,14 +99,37 @@ const Cart = ({ cartItems, updateCart, onCheckout , showCheckout}) => {
             {cartItems.map((item) => (
               <div key={item.id} className="summary-line">
                 <span>{item.name} (x{item.quantity})</span>
-                <span>₹{item.discountedPrice * item.quantity}</span>
+                <span>
+                  <span style={{ textDecoration: 'line-through', color: '#bbb', marginRight: 6 }}>
+                    ₹{item.originalPrice * item.quantity}
+                  </span>
+                  <span style={{ color: '#0f766e', fontWeight: 600, fontSize: '15px' }}>
+                    ₹{item.discountedPrice * item.quantity}
+                  </span>
+                </span>
               </div>
             ))}
           </div>
           <div className="total-divider">
             <div className="total-row">
-              <span className="total-label">Total Amount</span>
-              <span className="total-value">₹{totalPrice}</span>
+              <span className="total-label">Original Total</span>
+              <span className="total-value" style={{ textDecoration: 'line-through', color: '#bbb', fontSize: '15px' }}>₹{totalOriginal}</span>
+            </div>
+            <div className="total-row">
+              <span className="total-label">Discount</span>
+              <span className="total-value" style={{ color: '#ef4444', fontSize: '15px' }}>-₹{totalDiscount}</span>
+            </div>
+            <div className="total-row">
+              <span className="total-label">Subtotal</span>
+              <span className="total-value" style={{ fontSize: '15px' }}>₹{totalDiscounted}</span>
+            </div>
+            <div className="total-row">
+              <span className="total-label">Shipping</span>
+              <span className="total-value" style={{ fontSize: '15px' }}>₹{shipping}</span>
+            </div>
+            <div className="total-row" style={{ fontWeight: 700, fontSize: '16px', borderTop: '2px solid #eee', marginTop: 10, paddingTop: 10 }}>
+              <span className="total-label">Grand Total</span>
+              <span className="total-value" style={{ color: '#0f766e', fontSize: '17px' }}>₹{grandTotal}</span>
             </div>
           </div>
           <button className="checkout-btn" onClick={onCheckout}>
@@ -290,7 +323,7 @@ export default function CombinedCartCheckout() {
           padding: 0 16px;
         }
         .items-list-section { flex: 1; }
-        .summary-section { width: 350px; }
+        .summary-section { width: 350px; margin-top: 120px; }
 
         /* Mobile specific layout logic */
         @media (max-width: 768px) {
@@ -334,6 +367,15 @@ export default function CombinedCartCheckout() {
         .checkout-btn { 
           width: 100%; margin-top: 20px;  margin-bottom: 20px; padding: 14px; border: none; border-radius: 10px;
           background: linear-gradient(135deg, #0f766e, #2dd4bf); color: #fff; font-weight: 700; cursor: pointer;
+        }
+
+        /* Empty Cart Centering */
+        .empty-cart {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 60vh;
         }
 
        .modal-overlay {
