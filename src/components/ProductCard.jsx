@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useCart } from "./CartContext";
-import "../styles/ProductCard.css";
+import "./../styles/ProductCard.css";
 
 function ProductCard({ product, onView }) {
   const [message, setMessage] = useState(null);

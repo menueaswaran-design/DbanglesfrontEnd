@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/Hero.css";
+import "./../styles/Hero.css";
 
 function Hero() {
   const [active, setActive] = useState(null);

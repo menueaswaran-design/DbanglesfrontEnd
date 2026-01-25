@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import "../styles/Checkoutform.css";
+import "./../styles/Checkoutform.css";
 
 const CheckoutForm = ({ showCheckout, onClose, cartItems, onSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
