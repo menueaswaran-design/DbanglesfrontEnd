@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
-import "./../styles/Navbar.css";
+import "../styles/Navbar.css";
 
 function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
