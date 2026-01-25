@@ -38,7 +38,7 @@ function ProductModal() {
   const handleShare = async () => {
     if (!product) return;
     const shareTitle = `DBangles | ${product.name}`;
-    const shareText = `Discover "${product.name}" for just ₹${product.discountedPrice} (was ₹${product.originalPrice}).\n\n${product.description}\n\nShop now at DBangles!`;
+    const shareText = `Discover "${product.name}" for just ₹${product.discountedPrice} \n\n${product.description}\n\nShop now at DBangles!`;
     const shareUrl = window.location.href;
     if (navigator.share) {
       try {

@@ -222,6 +222,15 @@
     padding: 0.5rem;
     font-size: 0.8125rem;
   }
+
+  .add-to-cart-btn.added,
+  .add-to-cart-btn:disabled {
+    background: #e5e7eb !important;
+    color: #6b7280 !important;
+    border: 1px solid #d1d5db !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+  }
 }
 
 /* ---------------- Tablet ---------------- */
