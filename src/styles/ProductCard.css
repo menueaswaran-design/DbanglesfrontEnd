@@ -36,20 +36,7 @@
   transform: scale(1.1);
 }
 
-.discount-badge {
-  position: absolute;
-  top: var(--spacing-sm);
-  right: var(--spacing-sm);
-  background: linear-gradient(135deg, var(--error-color), #dc2626);
-  color: white;
-  padding: 0.3rem 0.6rem;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 0.75rem;
-  box-shadow: var(--shadow-sm);
-  z-index: 2;
-}
-
+/* ---------------- Product Info ---------------- */
 
 .product-info {
   padding: var(--spacing-md);
@@ -79,31 +66,89 @@
   overflow: hidden;
 }
 
+/* ---------------- Updated Price Section ---------------- */
+
 .product-price {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-xs);
+  flex-wrap: wrap;
 }
 
-.original-price {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  text-decoration: line-through;
-  font-weight: 500;
-}
-
+/* Discounted FIRST */
 .discounted-price {
   font-size: var(--font-size-lg);
   color: black;
   font-weight: 800;
 }
 
+/* Original AFTER (RED + line-through) */
+.original-price {
+  font-size: var(--font-size-sm);
+  color: #dc2626; /* RED */
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+/* Percentage GREEN */
+.discount-percent {
+  font-size: var(--font-size-sm);
+  color: #16a34a;
+  font-weight: 600;
+}
+
+/* ---------------- Message ---------------- */
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.message.cart-success {
+  color: #22c55e;
+}
+
+.message.cart-error {
+  color: #ef4444;
+} 
+
+.message-icon.cart-success {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  /* background-color: currentColor; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22c55e;
+  font-size: 12px;
+  font-weight: bold;
+} 
+.message-icon.cart-error {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  /* background-color: currentColor; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: bold;
+} 
+
+/* ---------------- Button ---------------- */
+
 .add-to-cart-btn {
   width: 100%;
   margin-top: var(--spacing-sm);
   padding: 0.75rem;
-  background: var(--primary-color, #0f766e); /* Use primary color variable, fallback to #0f766e */
+  background: var(--primary-color, #0f766e);
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -117,12 +162,13 @@
   transition: all 0.25s ease;
   box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
 }
+
 :root {
   --primary-color: #0f766e;
 }
 
 .add-to-cart-btn:hover {
-  background: #115e59; /* Slightly darker */
+  background: #115e59;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(15, 118, 110, 0.35);
 }
@@ -132,7 +178,8 @@
   box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);
 }
 
-/* Mobile Responsive */
+/* ---------------- Mobile ---------------- */
+
 @media (max-width: 480px) {
   .product-info {
     padding: var(--spacing-sm);
@@ -154,19 +201,8 @@
     font-size: 0.8125rem;
   }
 
-  .discount-badge {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.6875rem;
-  }
-
-  .wishlist-btn {
-    width: 28px;
-    height: 28px;
-  }
-
-  .wishlist-btn svg {
-    width: 14px;
-    height: 14px;
+  .discount-percent {
+    font-size: 0.75rem;
   }
 
   .add-to-cart-btn {
@@ -175,7 +211,8 @@
   }
 }
 
-/* Tablet adjustments */
+/* ---------------- Tablet ---------------- */
+
 @media (min-width: 481px) and (max-width: 968px) {
   .product-card {
     max-width: 100%;

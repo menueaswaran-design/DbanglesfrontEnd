@@ -1,29 +1,12 @@
 import React, { useState } from "react";
 import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
-export default function CombinedCartCheckout() {
-  const [cartItems, setCartItems] = useState(() => {
-    const stored = localStorage.getItem("cart");
-    return stored ? JSON.parse(stored) : [];
-  });
+import CheckoutForm from "./CheckoutForm";
+// ==================== NAVBAR (Placeholder) ====================
 
-  const [showCheckout, setShowCheckout] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [form, setForm] = useState({
-    customerName: "",
-    phoneNumber: "",
-    whatsappNumber: "",
-    deliveryAddress: "",
-    neededDate: "",
-    orderMessage: "",
-  });
-
-  const updateCart = (items) => {
-    setCartItems(items);
-    localStorage.setItem("cart", JSON.stringify(items));
-  };
-
+// ==================== CART COMPONENT ====================
+const Cart = ({ cartItems, updateCart, onCheckout }) => {
   const increaseQty = (id) => {
     updateCart(
       cartItems.map((item) =>
@@ -51,510 +34,321 @@ export default function CombinedCartCheckout() {
     0
   );
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  if (cartItems.length === 0) {
+    return (
+      <div className="empty-cart">
+        <div className="empty-icon">🛒</div>
+        <h2 className="empty-title">Your cart is empty</h2>
+        <p className="empty-text">Add some products to get started</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+     
+    <Navbar/>
+ 
+    <div className="cart-container">
+      <div className="items-list-section">
+        <h1 className="page-title">Shopping Cart</h1>
+        <div className="items-stack">
+          {cartItems.map((item) => (
+            <div key={item.id} className="cart-item-card">
+              <img src={item.image} alt={item.name} className="item-img" />
+              <div className="item-details">
+                <h3 className="item-name">{item.name}</h3>
+                <div className="price-row">
+                  <span className="current-price">₹{item.discountedPrice}</span>
+                  <span className="old-price">₹{Math.round(item.discountedPrice * 1.25)}</span>
+                </div>
+                <div className="subtotal-text">
+                  Subtotal: <strong>₹{item.discountedPrice * item.quantity}</strong>
+                </div>
+              </div>
+              <div className="item-actions">
+                <div className="qty-controls">
+                  <button onClick={() => decreaseQty(item.id)} className="qty-btn">−</button>
+                  <span className="qty-num">{item.quantity}</span>
+                  <button onClick={() => increaseQty(item.id)} className="qty-btn">+</button>
+                </div>
+                <button className="remove-btn" onClick={() => removeItem(item.id)}>
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="summary-section">
+        <div className="summary-card">
+          <h2 className="summary-title">Order Summary</h2>
+          <div className="summary-line-items">
+            {cartItems.map((item) => (
+              <div key={item.id} className="summary-line">
+                <span>{item.name} (x{item.quantity})</span>
+                <span>₹{item.discountedPrice * item.quantity}</span>
+              </div>
+            ))}
+          </div>
+          <div className="total-divider">
+            <div className="total-row">
+              <span className="total-label">Total Amount</span>
+              <span className="total-value">₹{totalPrice}</span>
+            </div>
+          </div>
+          <button className="checkout-btn" onClick={onCheckout}>
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+    </>
+  );
+};
+// const CheckoutForm = ({ showCheckout, onClose, cartItems, onSuccess }) => {
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [form, setForm] = useState({
+//     customerName: "",
+//     phoneNumber: "",
+//     whatsappNumber: "",
+//     deliveryAddress: "",
+//     landmark: "",
+//     city: "",
+//     pincode: "",
+//     orderMessage: "",
+//   });
+
+
+//   const handleChange = (e) => {
+//     setForm({ ...form, [e.target.name]: e.target.value });
+//   };
+
+//   const handleSubmit = async () => {
+//     if (!form.customerName || !form.phoneNumber || !form.whatsappNumber || !form.deliveryAddress) {
+//       alert("Please fill all required fields");
+//       return;
+//     }
+
+//     setIsSubmitting(true);
+//     try {
+//       const orderPayload = {
+//         ...form,
+//         orderedProducts: cartItems.map((item) => ({
+//           id: item.id,
+//           name: item.name,
+//           quantity: item.quantity,
+//           price: item.discountedPrice,
+//         })),
+//       };
+
+//       const res = await fetch("https://dbangles.vercel.app/api/orders", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(orderPayload),
+//       });
+
+//       const data = await res.json();
+//       if (data.success) {
+//         onSuccess();
+//         alert("Order placed successfully 🎉");
+//       } else {
+//         alert(data.error || "Failed to place order");
+//       }
+//     } catch (error) {
+//       alert("Failed to place order. Please try again.");
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   if (!showCheckout) return null;
+
+//   return (
+//     <div className="modal-overlay" onClick={onClose}>
+//       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+//         <button className="modal-close" onClick={onClose}><X size={24} /></button>
+//         <h2 className="modal-title">Delivery Details</h2>
+//         <div className="form-grid">
+//           <div className="form-col">
+//             <div className="input-group">
+//               <label>Customer Name</label>
+//               <input name="customerName" value={form.customerName} onChange={handleChange} />
+//             </div>
+//             <div className="input-group">
+//               <label>Phone Number</label>
+//               <input type="tel" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} />
+//             </div>
+//             <div className="input-group">
+//               <label>WhatsApp Number</label>
+//               <input type="tel" name="whatsappNumber" value={form.whatsappNumber} onChange={handleChange} />
+//             </div>
+//           </div>
+//           <div className="form-col">
+//             <div className="input-group">
+//               <label>Delivery Address</label>
+//               <input name="deliveryAddress" value={form.deliveryAddress} onChange={handleChange} />
+//             </div>
+//             <div className="input-group">
+//   <label>Landmark</label>
+//   <input
+//     name="landmark"
+//     value={form.landmark}
+//     onChange={handleChange}
+//   />
+// </div>
+
+// <div className="input-group">
+//   <label>City</label>
+//   <input
+//     name="city"
+//     value={form.city}
+//     onChange={handleChange}
+//   />
+// </div>
+
+// <div className="input-group">
+//   <label>Pincode</label>
+//   <input
+//     type="number"
+//     name="pincode"
+//     value={form.pincode}
+//     onChange={handleChange}
+//   />
+// </div>
+
+//             <div className="input-group">
+//               <label>Order Message (optional)</label>
+//               <textarea rows={2} name="orderMessage" value={form.orderMessage} onChange={handleChange} />
+//             </div>
+//           </div>
+//         </div>
+//         <button 
+//           className="confirm-btn" 
+//           disabled={isSubmitting} 
+//           onClick={handleSubmit}
+//         >
+//           {isSubmitting ? "Processing..." : "Confirm Order"}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+
+export default function CombinedCartCheckout() {
+  const [cartItems, setCartItems] = useState(() => {
+    const stored = localStorage.getItem("cart");
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [showCheckout, setShowCheckout] = useState(false);
+
+  const updateCart = (items) => {
+    setCartItems(items);
+    localStorage.setItem("cart", JSON.stringify(items));
   };
 
-  const handleSubmit = async () => {
-    if (
-      !form.customerName ||
-      !form.phoneNumber ||
-      !form.whatsappNumber ||
-      !form.deliveryAddress
-    ) {
-      alert("Please fill all required fields");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const orderPayload = {
-        customerName: form.customerName,
-        phoneNumber: form.phoneNumber,
-        whatsappNumber: form.whatsappNumber,
-        deliveryAddress: form.deliveryAddress,
-        orderMessage: form.orderMessage,
-        orderedProducts: cartItems.map(item => ({
-          id: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.discountedPrice
-        })),
-      };
-
-      const res = await fetch("https://dbangles.vercel.app/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setCartItems([]);
-        localStorage.removeItem("cart");
-        setShowCheckout(false);
-        alert("Order placed successfully 🎉");
-      } else {
-        alert(data.error || "Failed to place order");
-      }
-    } catch (error) {
-      alert("Failed to place order. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleOrderSuccess = () => {
+    setCartItems([]);
+    localStorage.removeItem("cart");
+    setShowCheckout(false);
   };
 
   return (
-    <div style={styles.container}>
-      <Navbar/>
-      <div style={styles.navbar} />
+    <div className="app-shell">
+      <div className="nav-container"><Navbar /></div>
+      
+      <main className="main-view">
+        <Cart
+          cartItems={cartItems}
+          updateCart={updateCart}
+          onCheckout={() => setShowCheckout(true)}
+        />
+      </main>
 
-      {/* MAIN CONTENT */}
-      <div style={{ ...styles.mainContent, filter: showCheckout ? "blur(4px)" : "none" }}>
-        {cartItems.length === 0 ? (
-          <div style={styles.emptyCart}>
-            <div style={styles.emptyIcon}>🛒</div>
-            <h3 style={styles.emptyTitle}>Your cart is empty</h3>
-            <p style={styles.emptyText}>Add some products to get started</p>
-          </div>
-        ) : (
-          <>
-            {/* TITLE */}
-            <h2 style={styles.pageTitle}>Shopping Cart</h2>
+      <CheckoutForm
+        showCheckout={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        cartItems={cartItems}
+        onSuccess={handleOrderSuccess}
+      />
 
-            {/* CART ITEMS */}
-            <div style={styles.itemsList}>
-              {cartItems.map((item) => (
-                <div key={item.id} style={styles.cartItem}>
-                  <img src={item.image} alt={item.name} style={styles.itemImage} />
-                  
-                  <div style={styles.itemDetails}>
-                    <h4 style={styles.itemName}>{item.name}</h4>
-                    
-                    <div style={styles.priceRow}>
-                      <span style={styles.itemPrice}>₹{item.discountedPrice}</span>
-                      <span style={styles.itemOriginal}>₹{Math.round(item.discountedPrice * 1.25)}</span>
-                    </div>
+      <style>{`
+        .app-shell { min-height: 100vh; background: #f8f9fa; font-family: sans-serif; }
+        .nav-container { height: 70px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .main-view { padding: 20px 0; }
 
-                    <div style={styles.subtotalRow}>
-                      Subtotal: <span style={styles.subtotalValue}>₹{item.discountedPrice * item.quantity}</span>
-                    </div>
-                  </div>
+        /* Cart Layout */
+        .cart-container {
+          display: flex;
+          gap: 24px;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 16px;
+        }
+        .items-list-section { flex: 1; }
+        .summary-section { width: 350px; }
 
-                  <div style={styles.itemControls}>
-                    <div style={styles.qtyBox}>
-                      <button style={styles.qtyBtnSmall} onClick={() => decreaseQty(item.id)}>−</button>
-                      <span style={styles.qtyDisplay}>{item.quantity}</span>
-                      <button style={styles.qtyBtnSmall} onClick={() => increaseQty(item.id)}>+</button>
-                    </div>
-                    <button style={styles.removeIconBtn} onClick={() => removeItem(item.id)}>
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        /* Mobile specific layout logic */
+        @media (max-width: 768px) {
+          .cart-container {
+            flex-direction: column !important; /* Forces vertical stack */
+          }
+          .items-list-section { order: 1; width: 100%; }
+          .summary-section { order: 2; width: 100%; margin-top: 20px; }
+          .summary-card { position: static !important; } /* Disable sticky on mobile */
+        }
 
-            {/* ORDER SUMMARY */}
-            <div style={styles.summarySection}>
-              <h3 style={styles.summaryTitle}>Order Summary</h3>
+        /* Cart Items */
+        .page-title { fontSize: 26px; font-weight: 700; margin-bottom: 24px; }
+        .items-stack { display: flex; flex-direction: column; gap: 12px; }
+        .cart-item-card { 
+          background: #fff; border-radius: 14px; padding: 14px; 
+          display: flex; gap: 12px; border: 1px solid #e8e8e8; 
+        }
+        .item-img { width: 100px; height: 100px; border-radius: 10px; object-fit: cover; background: #f0f0f0; }
+        .item-details { flex: 1; }
+        .item-name { font-size: 15px; font-weight: 700; margin: 0 0 8px 0; }
+        .current-price { color: #764ba2; font-weight: 700; font-size: 16px; margin-right: 8px; }
+        .old-price { color: #bbb; text-decoration: line-through; font-size: 13px; }
+        
+        /* Controls */
+        .item-actions { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .qty-controls { display: flex; align-items: center; background: #f3f0fa; padding: 4px; border-radius: 8px; }
+        .qty-btn { width: 28px; height: 28px; border: none; background: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .qty-num { width: 30px; text-align: center; font-weight: 600; }
+        .remove-btn { border: none; background: #fbe9f7; color: #d72660; padding: 8px; border-radius: 8px; cursor: pointer; }
 
-              {/* Items List in Summary */}
-              <div style={styles.summaryItems}>
-                {cartItems.map((item) => (
-                  <div key={item.id} style={styles.summaryItem}>
-                    <div style={styles.summaryItemName}>{item.name}</div>
-                    <div style={styles.summaryItemPrice}>₹{item.discountedPrice * item.quantity}</div>
-                  </div>
-                ))}
-              </div>
+        /* Summary Card */
+        .summary-card { 
+          position: sticky; top: 90px; background: #fff; 
+          padding: 20px; border-radius: 16px; border: 1px solid #e8e8e8; 
+        }
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #666; }
+        .total-divider { border-top: 2px solid #eee; margin-top: 15px; padding-top: 15px; }
+        .total-row { display: flex; justify-content: space-between; align-items: center; }
+        .total-value { font-size: 22px; font-weight: 700; color: #764ba2; }
+        .checkout-btn { 
+          width: 100%; margin-top: 20px;  margin-bottom: 20px; padding: 14px; border: none; border-radius: 10px;
+          background: linear-gradient(135deg, #764ba2, #667eea); color: #fff; font-weight: 700; cursor: pointer;
+        }
 
-              {/* Pricing Breakdown */}
-              <div style={styles.pricingBreakdown}>
-                <div style={styles.breakdownRow}>
-                  <span>Subtotal</span>
-                  <span>₹{totalPrice}</span>
-                </div>
-               
-              </div>
+        /* Modal / Form */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 10px; }
+        .modal-content { background: #fff; padding: 24px; border-radius: 12px; width: 100%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 15px; border: none; background: none; cursor: pointer; }
+        .form-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+        .form-col { flex: 1 1 250px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .input-group input, .input-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        .confirm-btn { width: 100%; padding: 15px; background: #764ba2; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-              {/* Total */}
-              <div style={styles.totalSection}>
-                <span style={styles.totalLabel}>Total Amount</span>
-                <span style={styles.totalPrice}>₹{totalPrice}</span>
-              </div>
-
-              {/* Checkout Button */}
-              <button style={styles.checkoutBtn} onClick={() => setShowCheckout(true)}>
-                Proceed to Checkout
-              </button>
-
-             
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* MODAL - ORIGINAL FORM UNCHANGED */}
-      {showCheckout && (
-        <div style={styles.modalOverlay} onClick={() => setShowCheckout(false)}>
-          <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button
-              style={styles.closeBtn}
-              onClick={() => setShowCheckout(false)}
-              title="Close"
-            >
-              <X />
-            </button>
-
-            <h3 style={{ marginBottom: 18, color: "#764ba2", fontWeight: 700, fontSize: 22 }}>Delivery Details</h3>
-
-            <div style={styles.formGrid} onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
-              <div style={styles.formCol}>
-                <Input label="Full Name" name="customerName" onChange={handleChange} />
-                <Input label="Phone Number" name="phoneNumber" onChange={handleChange} />
-                <Input label="WhatsApp Number" name="whatsappNumber" onChange={handleChange} />
-              </div>
-              <div style={styles.formCol}>
-                <Textarea
-                  label="Delivery Address"
-                  name="deliveryAddress"
-                  onChange={handleChange}
-                />
-                <Textarea
-                  label="Order Message"
-                  name="orderMessage"
-                  optional
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <button
-              style={{
-                ...styles.confirmBtn,
-                background: "linear-gradient(135deg,#764ba2,#667eea)",
-                opacity: isSubmitting ? 0.6 : 1,
-                fontWeight: 600,
-                fontSize: 16,
-                marginTop: 8,
-              }}
-              disabled={isSubmitting}
-              onClick={handleSubmit}
-            >
-              {isSubmitting ? "Processing..." : "Confirm Order"}
-            </button>
-          </div>
-        </div>
-      )}
+        /* Empty State */
+        .empty-cart { text-align: center; padding: 100px 20px; }
+        .empty-icon { font-size: 60px; }
+      `}</style>
     </div>
   );
 }
-
-const Input = ({ label, optional, ...props }) => (
-  <div style={{ marginBottom: 12 }}>
-    <label>
-      {label}
-      {optional && " (optional)"}
-    </label>
-    <input style={styles.input} {...props} />
-  </div>
-);
-
-const Textarea = ({ label, optional, ...props }) => (
-  <div style={{ marginBottom: 12 }}>
-    <label>
-      {label}
-      {optional && " (optional)"}
-    </label>
-    <textarea rows={3} style={styles.input} {...props} />
-  </div>
-);
-
-const styles = {
-  container: {
-    minHeight: "100vh",
-    background: "#f8f9fa",
-  },
-  navbar: {
-    height: "70px",
-    background: "#fff",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  },
-  mainContent: {
-    maxWidth: "600px",
-    margin: "0 auto",
-    padding: "20px 16px 40px",
-    transition: "filter 0.3s ease",
-  },
-  emptyCart: {
-    textAlign: "center",
-    paddingTop: "80px",
-  },
-  emptyIcon: {
-    fontSize: "64px",
-    marginBottom: "20px",
-  },
-  emptyTitle: {
-    color: "#333",
-    fontSize: "20px",
-    fontWeight: "600",
-    margin: "0 0 8px 0",
-  },
-  emptyText: {
-    color: "#999",
-    fontSize: "14px",
-    margin: 0,
-  },
-  pageTitle: {
-    fontSize: "26px",
-    fontWeight: "700",
-    color: "#000",
-    margin: "0 0 24px 0",
-  },
-  itemsList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    marginBottom: "32px",
-  },
-  cartItem: {
-    background: "#fff",
-    borderRadius: "14px",
-    padding: "14px",
-    display: "flex",
-    gap: "12px",
-    border: "1px solid #e8e8e8",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-  },
-  itemImage: {
-    width: "100px",
-    height: "100px",
-    borderRadius: "10px",
-    objectFit: "cover",
-    background: "#f0f0f0",
-  },
-  itemDetails: {
-    flex: 1,
-    minWidth: 0,
-  },
-  itemName: {
-    fontSize: "15px",
-    fontWeight: "700",
-    color: "#000",
-    margin: "0 0 8px 0",
-    lineHeight: "1.3",
-  },
-  priceRow: {
-    display: "flex",
-    gap: "8px",
-    alignItems: "center",
-    marginBottom: "6px",
-  },
-  itemPrice: {
-    fontSize: "16px",
-    fontWeight: "700",
-    color: "#764ba2",
-  },
-  itemOriginal: {
-    fontSize: "13px",
-    color: "#bbb",
-    textDecoration: "line-through",
-  },
-  subtotalRow: {
-    fontSize: "12px",
-    color: "#666",
-  },
-  subtotalValue: {
-    fontWeight: "600",
-    color: "#000",
-  },
-  itemControls: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    alignItems: "center",
-  },
-  qtyBox: {
-    display: "flex",
-    alignItems: "center",
-    background: "#f3f0fa",
-    borderRadius: "8px",
-    padding: "4px 8px",
-    gap: "6px",
-  },
-  qtyBtnSmall: {
-    width: "28px",
-    height: "28px",
-    border: "none",
-    background: "#fff",
-    color: "#764ba2",
-    fontWeight: "700",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "16px",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  qtyDisplay: {
-    width: "24px",
-    textAlign: "center",
-    fontWeight: "600",
-    fontSize: "14px",
-  },
-  removeIconBtn: {
-    width: "36px",
-    height: "36px",
-    border: "none",
-    background: "#fbe9f7",
-    color: "#d72660",
-    borderRadius: "8px",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
-  },
-  summarySection: {
-    background: "#fff",
-    borderRadius: "16px",
-    padding: "20px",
-    border: "1px solid #e8e8e8",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-  },
-  summaryTitle: {
-    fontSize: "18px",
-    fontWeight: "700",
-    color: "#000",
-    margin: "0 0 16px 0",
-  },
-  summaryItems: {
-    marginBottom: "16px",
-    paddingBottom: "16px",
-    borderBottom: "1px solid #e8e8e8",
-  },
-  summaryItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "13px",
-    marginBottom: "8px",
-  },
-  summaryItemName: {
-    color: "#666",
-  },
-  summaryItemPrice: {
-    fontWeight: "600",
-    color: "#000",
-  },
-  pricingBreakdown: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginBottom: "16px",
-    paddingBottom: "16px",
-    borderBottom: "1px solid #e8e8e8",
-  },
-  breakdownRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "13px",
-    color: "#666",
-  },
-  freeText: {
-    color: "#16a34a",
-    fontWeight: "600",
-  },
-  totalSection: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "20px",
-    paddingBottom: "16px",
-    borderBottom: "2px solid #e8e8e8",
-  },
-  totalLabel: {
-    fontSize: "16px",
-    fontWeight: "700",
-    color: "#000",
-  },
-  totalPrice: {
-    fontSize: "22px",
-    fontWeight: "700",
-    color: "#764ba2",
-  },
-  checkoutBtn: {
-    width: "100%",
-    padding: "14px",
-    background: "linear-gradient(135deg, #764ba2, #667eea)",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    fontWeight: "700",
-    fontSize: "15px",
-    cursor: "pointer",
-    boxShadow: "0 2px 8px rgba(118,75,162,0.2)",
-    marginBottom: "12px",
-  },
-  trustMessage: {
-    textAlign: "center",
-    fontSize: "12px",
-    color: "#999",
-    margin: 0,
-  },
-  modalOverlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.35)",
-    backdropFilter: "blur(4px)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-  },
-  modal: {
-    background: "#fff",
-    padding: 24,
-    borderRadius: 12,
-    width: "100%",
-    maxWidth: 500,
-    position: "relative",
-  },
-  closeBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    border: "none",
-    background: "none",
-    cursor: "pointer",
-    padding: 0,
-  },
-  formGrid: {
-    display: "flex",
-    gap: 18,
-    marginBottom: 8,
-    flexWrap: "wrap",
-  },
-  formCol: {
-    flex: 1,
-    minWidth: 200,
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-  },
-  input: {
-    width: "100%",
-    padding: 10,
-    border: "1px solid #e5e7eb",
-    borderRadius: 6,
-  },
-  confirmBtn: {
-    width: "100%",
-    padding: 14,
-    marginTop: 10,
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-  },
-};

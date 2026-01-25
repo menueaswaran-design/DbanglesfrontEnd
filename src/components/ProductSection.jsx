@@ -34,15 +34,21 @@ function ProductSection({ title, products, id, showCategories, categories }) {
         </div>
       )}
       
-      <div className="products-grid">
-        {filteredProducts.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onView={(prod) => Navigate(`/product/${prod.id}`)}
-          />
-        ))}
-      </div>
+      {filteredProducts.length === 0 ? (
+        <div style={{ textAlign: 'center', color: '#888', padding: '40px 0', fontSize: '1.1rem', fontWeight: 500 }}>
+          {id === 'bangles' ? 'No bangles found.' : id === 'dresses' ? 'No dresses found.' : 'No products found.'}
+        </div>
+      ) : (
+        <div className="products-grid">
+          {filteredProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onView={(prod) => Navigate(`/product/${prod.id}`)}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

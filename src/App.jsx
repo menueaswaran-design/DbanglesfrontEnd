@@ -9,7 +9,7 @@ import Cart from './components/Cart';
 import { CartProvider } from './components/CartContext';
 import './App.css';
 import ProductModal from './components/Productmodal';
-
+import Loader from './components/Loader';
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [productsData, setProductsData] = useState({ bangles: [], dresses: [] });
@@ -21,25 +21,7 @@ function AppContent() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
-        // Try to get cached products from localStorage
-        let cached = null;
-        try {
-          const cachedStr = localStorage.getItem('productsData');
-          if (cachedStr) {
-            cached = JSON.parse(cachedStr);
-            // Validate cached structure
-            if (cached && Array.isArray(cached.bangles) && Array.isArray(cached.dresses)) {
-              setProductsData(cached);
-              setLoading(false);
-              return;
-            }
-          }
-        } catch (e) {
-          // Ignore parse errors and fetch fresh
-        }
-
-        // If not cached, fetch from API
+       // If not cached, fetch from API
         const response = await fetch('https://dbangles.vercel.app/api/products');
         if (!response.ok) {
           throw new Error('Failed to fetch products');
@@ -52,11 +34,7 @@ function AppContent() {
           const newProductsData = { bangles, dresses };
           setProductsData(newProductsData);
           // Cache in localStorage
-          try {
-            localStorage.setItem('productsData', JSON.stringify(newProductsData));
-          } catch (e) {
-            // Ignore quota/storage errors
-          }
+         
         } else {
           setProductsData({ bangles: [], dresses: [] });
         }
@@ -112,11 +90,12 @@ function AppContent() {
         <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <Hero />
         <main className="main-content">
-          <div className="loading">Loading products...</div>
+          <div style={{ paddingTop: 40 }}><Loader text="Loading products..." /></div>
         </main>
       </div>
     );
   }
+
 
   if (error) {
     return (

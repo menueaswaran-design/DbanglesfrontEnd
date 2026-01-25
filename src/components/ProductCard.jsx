@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useCart } from "./CartContext";
 import "../styles/ProductCard.css";
 
-
 function ProductCard({ product, onView }) {
   const [message, setMessage] = useState(null);
   const { cart, addToCart } = useCart();
@@ -23,17 +22,16 @@ function ProductCard({ product, onView }) {
   const handleAddToCart = (e) => {
     e.stopPropagation();
     if (cart.some((item) => item.id === product.id)) {
-      showMessage("Already in cart", "error");
+      showMessage("Already in cart", "cart-error");
       return;
     }
     addToCart(product);
-    showMessage("Added to cart", "success");
+    showMessage("Added to cart", "cart-success");
   };
 
   return (
     <div
       className="product-card"
-      style={{ position: "relative", cursor: "pointer" }}
       onClick={() => onView && onView(product)}
     >
       <div className="product-image-container">
@@ -42,59 +40,30 @@ function ProductCard({ product, onView }) {
           alt={product.name}
           className="product-image"
         />
-        <span className="discount-badge">-{discount}%</span>
       </div>
 
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>
         <p className="product-description">{product.description}</p>
 
+        {/* ✅ Updated Price Order */}
         <div className="product-price">
-          <span className="original-price">
-            ₹{product.originalPrice}
-          </span>
           <span className="discounted-price">
             ₹{product.discountedPrice}
           </span>
+
+          <span className="original-price">
+            ₹{product.originalPrice}
+          </span>
+
+          <span className="discount-percent">
+            {discount}% OFF
+          </span>
         </div>
 
-        {/* ✅ Message above button */}
         {message && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "10px",
-              fontSize: "14px",
-              fontWeight: "500",
-              color:
-                message.type === "success"
-                  ? "#22c55e"
-                  : "#ef4444",
-            }}
-          >
-            {/* Circle Tick */}
-            <div
-              style={{
-                width: "20px",
-                height: "20px",
-                borderRadius: "50%",
-                backgroundColor:
-                  message.type === "success"
-                    ? "#22c55e"
-                    : "#ef4444",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontSize: "12px",
-                fontWeight: "bold",
-              }}
-            >
-              ✓
-            </div>
-
+          <div className={`message ${message.type}`}>
+            <div className={`message-icon ${message.type}`}>✓</div>
             {message.text}
           </div>
         )}
