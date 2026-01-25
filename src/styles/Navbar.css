@@ -183,6 +183,7 @@
 }
 
 /* MOBILE CART BADGE */
+/* MOBILE CART BADGE */
 .mobile-cart-badge {
   position: absolute;
   top: -2px;
@@ -193,4 +194,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  display: f
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
