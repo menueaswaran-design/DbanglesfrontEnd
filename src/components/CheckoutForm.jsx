@@ -63,20 +63,21 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
     }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
+    // Debug: log the payload being sent
+    const orderPayload = {
+      ...form,
+      orderedProducts: cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.discountedPrice,
+      })),
+    };
+    console.log('Submitting order payload:', orderPayload);
 
     setIsSubmitting(true);
 
     try {
-      const orderPayload = {
-        ...form,
-        orderedProducts: cartItems.map((item) => ({
-          id: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.discountedPrice,
-        })),
-      };
-
       const res = await fetch("https://dbangles.vercel.app/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,6 +85,8 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
       });
 
       const data = await res.json();
+      // Debug: log the backend response
+      console.log('Order API response:', data);
 
       if (res.ok && data.success) {
         setOpenscanner(true);

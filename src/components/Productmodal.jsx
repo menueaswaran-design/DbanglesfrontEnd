@@ -140,7 +140,15 @@ function ProductModal() {
 
           <h2 className="productmodal-title">{product.name}</h2>
           <div className="productmodal-description-box">
-            <p className="productmodal-description-text">{product.description}</p>
+            <p className="productmodal-description-text">
+              {product.description && product.description.split(/(\n+)/).map((part, idx) => {
+                if (/^\n+$/.test(part)) {
+                  // Render a <br /> for each newline character
+                  return Array.from({ length: part.length }, (_, i) => <br key={"br-"+idx+"-"+i} />);
+                }
+                return part;
+              })}
+            </p>
           </div>
 
           <div className="productmodal-price-row">
