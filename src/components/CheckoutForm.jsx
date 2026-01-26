@@ -15,24 +15,54 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
     pincode: "",
     orderMessage: "",
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type } = e.target;
+    // Only allow numbers for phone, whatsapp, pincode
+    if (["phoneNumber", "whatsappNumber", "pincode"].includes(name)) {
+      // Remove non-digits
+      let newValue = value.replace(/\D/g, "");
+      // Limit to 10 digits for phone/whatsapp
+      if ((name === "phoneNumber" || name === "whatsappNumber") && newValue.length > 10) {
+        newValue = newValue.slice(0, 10);
+      }
+      // Limit pincode to 6 digits (optional, can adjust)
+      if (name === "pincode" && newValue.length > 6) {
+        newValue = newValue.slice(0, 6);
+      }
+      setForm({ ...form, [name]: newValue });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+    // Clear error for this field on change
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async () => {
-    if (
-      !form.customerName ||
-      !form.phoneNumber ||
-      !form.whatsappNumber ||
-      !form.deliveryAddress ||
-      !form.landmark ||
-      !form.city ||
-      !form.pincode
-    ) {
-      alert("Please fill all required fields");
-      return;
+    // Validation
+    const newErrors = {};
+    if (!form.customerName) newErrors.customerName = "Name is required";
+    if (!form.phoneNumber) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^\d{10}$/.test(form.phoneNumber)) {
+      newErrors.phoneNumber = "Enter a valid 10-digit number";
     }
+    if (!form.whatsappNumber) {
+      newErrors.whatsappNumber = "WhatsApp number is required";
+    } else if (!/^\d{10}$/.test(form.whatsappNumber)) {
+      newErrors.whatsappNumber = "Enter a valid 10-digit number";
+    }
+    if (!form.deliveryAddress) newErrors.deliveryAddress = "Address is required";
+    if (!form.landmark) newErrors.landmark = "Landmark is required";
+    if (!form.city) newErrors.city = "City is required";
+    if (!form.pincode) {
+      newErrors.pincode = "Pincode is required";
+    } else if (!/^\d{6}$/.test(form.pincode)) {
+      newErrors.pincode = "Enter a valid 6-digit pincode";
+    }
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
     setIsSubmitting(true);
 
@@ -56,15 +86,14 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        // ✅ Only open scanner if order is successful
         setOpenscanner(true);
       } else {
-        alert(data.error || "Failed to place order");
+        setErrors({ submit: data.error || "Failed to place order" });
         setOpenscanner(false);
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to place order. Please try again.");
+      setErrors({ submit: "Failed to place order. Please try again." });
       setOpenscanner(false);
     } finally {
       setIsSubmitting(false);
@@ -97,6 +126,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
           <div className="form-grid">
             {/* LEFT */}
             <div className="form-col">
+
               <div className="input-group">
                 <label>Customer Name *</label>
                 <input
@@ -105,6 +135,9 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
                   value={form.customerName}
                   onChange={handleChange}
                 />
+                {errors.customerName && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.customerName}</div>
+                )}
               </div>
 
               <div className="input-group">
@@ -115,7 +148,13 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
                   placeholder="10-digit number"
                   value={form.phoneNumber}
                   onChange={handleChange}
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
                 />
+                {errors.phoneNumber && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.phoneNumber}</div>
+                )}
               </div>
 
               <div className="input-group">
@@ -126,7 +165,13 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
                   placeholder="WhatsApp number"
                   value={form.whatsappNumber}
                   onChange={handleChange}
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
                 />
+                {errors.whatsappNumber && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.whatsappNumber}</div>
+                )}
               </div>
 
               <div className="input-group">
@@ -138,19 +183,25 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
                   value={form.deliveryAddress}
                   onChange={handleChange}
                 />
+                {errors.deliveryAddress && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.deliveryAddress}</div>
+                )}
               </div>
             </div>
 
             {/* RIGHT */}
             <div className="form-col">
               <div className="input-group">
-                <label>Landmark</label>
+                <label>Landmark *</label>
                 <input
                   name="landmark"
                   placeholder="Nearby landmark"
                   value={form.landmark}
                   onChange={handleChange}
                 />
+                {errors.landmark && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.landmark}</div>
+                )}
               </div>
 
               <div className="input-group">
@@ -161,17 +212,26 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
                   value={form.city}
                   onChange={handleChange}
                 />
+                {errors.city && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.city}</div>
+                )}
               </div>
 
               <div className="input-group">
                 <label>Pincode *</label>
                 <input
-                  type="number"
+                  type="text"
                   name="pincode"
                   placeholder="Pincode"
                   value={form.pincode}
                   onChange={handleChange}
+                  maxLength={6}
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
                 />
+                {errors.pincode && (
+                  <div style={{ color: "red", fontSize: 13 }}>{errors.pincode}</div>
+                )}
               </div>
 
               <div className="input-group">
@@ -187,6 +247,9 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
             </div>
           </div>
 
+          {errors.submit && (
+            <div style={{ color: "red", fontSize: 14, marginBottom: 8 }}>{errors.submit}</div>
+          )}
           <button
             className="confirm-btn"
             disabled={isSubmitting}

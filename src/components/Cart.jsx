@@ -12,32 +12,30 @@ import WhatsappFloatingButton from "./WhatsappFloatingButton";
 // ==================== CART COMPONENT ====================
 const Cart = ({ onCheckout, showCheckout }) => {
   const location = useLocation();
-  const { cart, removeFromCart } = useCart();
+  const { cart, removeFromCart, updateQuantity } = useCart();
+
+  const [buyNowQty, setBuyNowQty] = useState(1);
   const buyNowProduct = location.state?.product;
 
-  // ✅ If Buy Now exists → override cart display
+  // If Buy Now exists → override cart display
   const displayItems = buyNowProduct
-    ? [{ ...buyNowProduct, quantity: 1 }]
+    ? [{ ...buyNowProduct, quantity: buyNowQty }]
     : cart;
 
   const increaseQty = (id) => {
-    if (buyNowProduct) return;
-    const updated = cart.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    localStorage.setItem("cart", JSON.stringify(updated));
-    window.dispatchEvent(new Event("storage"));
+    if (buyNowProduct) {
+      setBuyNowQty((qty) => qty + 1);
+    } else {
+      updateQuantity(id, 1);
+    }
   };
 
   const decreaseQty = (id) => {
-    if (buyNowProduct) return;
-    const updated = cart.map((item) =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
-    );
-    localStorage.setItem("cart", JSON.stringify(updated));
-    window.dispatchEvent(new Event("storage"));
+    if (buyNowProduct) {
+      setBuyNowQty((qty) => (qty > 1 ? qty - 1 : 1));
+    } else {
+      updateQuantity(id, -1);
+    }
   };
 
   const removeItem = (id) => {
@@ -102,12 +100,12 @@ const Cart = ({ onCheckout, showCheckout }) => {
                 </div>
 
                 {/* ❗ Disable controls only if Buy Now */}
+
                 <div className="item-actions">
                   <div className="qty-controls">
                     <button
                       onClick={() => decreaseQty(item.id)}
                       className="qty-btn"
-                      disabled={!!buyNowProduct}
                     >
                       −
                     </button>
@@ -115,7 +113,6 @@ const Cart = ({ onCheckout, showCheckout }) => {
                     <button
                       onClick={() => increaseQty(item.id)}
                       className="qty-btn"
-                      disabled={!!buyNowProduct}
                     >
                       +
                     </button>
