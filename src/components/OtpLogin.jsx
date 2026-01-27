@@ -1,87 +1,70 @@
-// import React, { useState } from "react";
-// import { auth } from "../firebase";
-// import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import React, { useState } from "react";
+import { auth } from "../firebase";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import "../styles/OtpLogin.css";
 
-// const OtpLogin = () => {
-//   const [phone, setPhone] = useState("");
-//   const [otp, setOtp] = useState("");
-//   const [confirmationResult, setConfirmationResult] = useState(null);
+const GoogleSignIn = ({ onSuccess }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-//   // 🔹 Setup Recaptcha
-//  const setupRecaptcha = () => {
-//   if (!window.recaptchaVerifier) {
-//     window.recaptchaVerifier = new RecaptchaVerifier(
-//       auth, // 🔥 auth MUST be first
-//       "recaptcha-container",
-//       {
-//         size: "invisible",
-//         callback: () => {
-//           console.log("Recaptcha verified");
-//         },
-//       }
-//     );
-//   }
-// };
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError("");
 
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      console.log("Logged in user:", result.user);
+      
+      // Call onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//   // 🔹 Send OTP
-//   const sendOtp = async () => {
-//     if (!phone) return alert("Enter phone number");
+  return (
+    <div className="google-signin-container">
+      <div className="signin-header">
+        <div className="signin-icon">🔐</div>
+        <h2 className="signin-title">Sign In to Continue</h2>
+        <p className="signin-subtitle">Securely sign in with your Google account to proceed with checkout</p>
+      </div>
 
-//     try {
-//       setupRecaptcha();
-//       const appVerifier = window.recaptchaVerifier;
+      <button 
+        className="google-signin-btn"
+        onClick={handleGoogleSignIn}
+        disabled={loading}
+      >
+        <svg className="google-icon" viewBox="0 0 24 24" width="20" height="20">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        {loading ? "Signing in..." : "Continue with Google"}
+      </button>
 
-//       const result = await signInWithPhoneNumber(auth, phone, appVerifier);
-//       setConfirmationResult(result);
-//       alert("OTP Sent!");
-//     } catch (error) {
-//       console.error(error);
-//       alert(error.message);
-//     }
-//   };
+      {error && (
+        <div className="error-message">
+          <span className="error-icon">⚠️</span>
+          {error}
+        </div>
+      )}
 
-//   // 🔹 Verify OTP
-//   const verifyOtp = async () => {
-//     if (!otp) return alert("Enter OTP");
+      <div className="signin-footer">
+        <p className="privacy-text">
+          By signing in, you agree to our terms and privacy policy
+        </p>
+      </div>
+    </div>
+  );
+};
 
-//     try {
-//       const result = await confirmationResult.confirm(otp);
-//       console.log("User:", result.user);
-//       alert("Login Successful!");
-//     } catch (error) {
-//       alert("Invalid OTP");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2>Phone OTP Login</h2>
-
-//       <input
-//         type="tel"
-//         placeholder="+919876543210"
-//         value={phone}
-//         onChange={(e) => setPhone(e.target.value)}
-//       />
-
-//       <button onClick={sendOtp}>Send OTP</button>
-
-//       <br /><br />
-
-//       <input
-//         type="text"
-//         placeholder="Enter OTP"
-//         value={otp}
-//         onChange={(e) => setOtp(e.target.value)}
-//       />
-
-//       <button onClick={verifyOtp}>Verify OTP</button>
-
-//       {/* 🔹 Required Recaptcha Div */}
-//       <div id="recaptcha-container"></div>
-//     </div>
-//   );
-// };
-
-// export default OtpLogin;
+export default GoogleSignIn;

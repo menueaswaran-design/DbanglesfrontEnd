@@ -70,7 +70,7 @@ function ProductModal() {
       let related = data.products.filter(
         (item) => String(item._id || item.id) !== String(productid)
       );
-      setRelatedProducts(related.slice(0, 6));
+      setRelatedProducts(related.slice(0, 10));
     } catch (error) {
       console.error("Error fetching related products:", error);
     }
@@ -151,6 +151,24 @@ function ProductModal() {
             </p>
           </div>
 
+          {/* Size Selection for Bangles */}
+          {product.category?.toLowerCase().includes('bangle') && (
+            <div className="productmodal-size-section">
+              <p className="size-label">Select Size:</p>
+              <div className="size-options">
+                {bangleSizes.map((size) => (
+                  <button
+                    key={size}
+                    className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="productmodal-price-row">
             <span className="productmodal-discounted">₹{product.discountedPrice}</span>
             <span className="productmodal-original">₹{product.originalPrice}</span>
@@ -159,16 +177,28 @@ function ProductModal() {
 
           <p className="productmodal-save-text">Inclusive of all taxes. You save ₹{product.originalPrice - product.discountedPrice}</p>
 
+          <div className="productmodal-note-box">
+            <p className="productmodal-note-text">
+              <strong>NOTE:</strong> The bangles we will start to make only after the payment. If any mistake in our side the amount is refund to you. If any queries WhatsApp or Instagram DM. We will reach out to you incase any clarification. Customization available.
+            </p>
+          </div>
+
           <div className="productmodal-button-group">
-            <button className="productmodal-add-btn" onClick={() => {
-              if (cart.some(item => item.id === product.id)) {
-                setCartMessage("Already in cart");
-              } else {
-                addToCart({ ...product, selectedSize });
-                setCartMessage("Added to cart");
-              }
-              setTimeout(() => setCartMessage(""), 2000);
-            }}>Add to Cart</button>
+            <button 
+              className="productmodal-add-btn" 
+              disabled={cart.some(item => item.id === product.id)}
+              onClick={() => {
+                if (cart.some(item => item.id === product.id)) {
+                  setCartMessage("Already in cart");
+                } else {
+                  addToCart({ ...product, selectedSize });
+                  setCartMessage("Added to cart");
+                }
+                setTimeout(() => setCartMessage(""), 2000);
+              }}
+            >
+              {cart.some(item => item.id === product.id) ? "In Cart" : "Add to Cart"}
+            </button>
             <button onClick={() => { navigate('/cart', { state: { product: { ...product, selectedSize } } })}} className="productmodal-buy-btn">Buy Now</button>
           </div>
           {cartMessage && <p className="productmodal-cart-feedback">{cartMessage}</p>}

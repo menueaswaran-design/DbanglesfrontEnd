@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 import scanner from "../assets/scanner.jpeg";
 import "../styles/payment.css";
 
 function Payment({ phoneNumber }) {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [orderId, setOrderId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [phone, setPhone] = useState(phoneNumber || "");
+
+  // Check authentication on mount
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      alert("Please login to access payment");
+      navigate("/cart");
+    }
+  }, [isAuthenticated, navigate]);
 
   const getOrderId = async () => {
     if (!phone) {
@@ -28,6 +40,7 @@ function Payment({ phoneNumber }) {
       const data = await response.json();
       setOrderId(data.id); // token / orderId
     } catch (err) {
+      console.error("Failed to fetch order:", err);
       setError(true);
     } finally {
       setLoading(false);

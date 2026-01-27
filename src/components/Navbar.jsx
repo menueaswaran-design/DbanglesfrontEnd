@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
+import { ShoppingBag } from "lucide-react";
 import "../styles/Navbar.css";
 
 function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
@@ -48,6 +49,15 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
           </button>
 
           <div className="navbar-actions">
+            {/* ORDERS – DESKTOP ONLY */}
+            <button
+              className="icon-btn track-btn desktop-only"
+              onClick={() => navigate('/track-orders')}
+              title="Orders"
+            >
+              <ShoppingBag size={24} />
+            </button>
+
             {/* SEARCH – DESKTOP ONLY */}
             <div className={`search-container ${isSearchOpen ? "active" : ""}`}>
               <button className="icon-btn" onClick={toggleSearch}>
@@ -158,6 +168,15 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
           {cartCount > 0 && (
             <span className="mobile-cart-badge">{cartCount}</span>
           )}
+        </button>
+
+        {/* ORDERS */}
+        <button
+          className="mobile-nav-btn"
+          onClick={() => navigate('/track-orders')}
+        >
+          <ShoppingBag size={26} />
+          <span>Orders</span>
         </button>
       </div>
     </>

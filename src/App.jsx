@@ -7,6 +7,8 @@ import Hero from './components/Hero';
 import ProductSection from './components/ProductSection';
 import Cart from './components/Cart';
 import { CartProvider } from './components/CartContext';
+import { AuthProvider } from './components/AuthContext';
+import TrackOrders from './components/TrackOrders';
 import './App.css';
 import ProductModal from './components/Productmodal';
 import Loader from './components/Loader';
@@ -144,17 +146,20 @@ function AppContent() {
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<AppContent />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path='/product/:productid' element={<ProductModal />} />
-          {/* <Route path='/login' element={<OtpLogin />} /> */}
-          {/* <Route path='/orders' element={<Orders />} /> */}
-        </Routes>
-      </Router>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<AppContent />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path='/product/:productid' element={<ProductModal />} />
+            <Route path='/track-orders' element={<TrackOrders />} />
+            {/* <Route path='/login' element={<OtpLogin />} /> */}
+            {/* <Route path='/orders' element={<Orders />} /> */}
+          </Routes>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
