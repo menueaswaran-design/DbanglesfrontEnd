@@ -35,7 +35,7 @@ const TrackOrders = () => {
 
     try {
       const userId = user.uid;
-      const response = await fetch(`http://localhost:3000/api/orders?userId=${userId}`);
+      const response = await fetch(`https://dbangles.vercel.app/api/orders?userId=${userId}`);
       
       if (!response.ok) {
         throw new Error("Failed to fetch orders");

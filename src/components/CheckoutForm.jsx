@@ -118,7 +118,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
     setIsSubmitting(true);
 
     try {
-      const API_URL = "http://localhost:3000/api/orders";
+      const API_URL = "https://dbangles.vercel.app/api/orders";
       
       const res = await fetch(API_URL, {
         method: "POST",
