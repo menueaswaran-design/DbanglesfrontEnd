@@ -2,9 +2,10 @@ import React from "react";
 import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
 import CheckoutForm from "./CheckoutForm";
-// import OtpLogin from "./OtpLogin";
+import GoogleSignIn from "./OtpLogin";
 import { useLocation } from "react-router-dom";
 import { useCart } from "./CartContext";
+import { useAuth } from "./AuthContext";
 import {useState} from "react";
 import WhatsappFloatingButton from "./WhatsappFloatingButton";
 // ==================== NAVBAR (Placeholder) ====================
@@ -367,14 +368,14 @@ const Cart = ({ onCheckout, showCheckout }) => {
 
 
 export default function CombinedCartCheckout() {
+  const { isAuthenticated } = useAuth();
   const [cartItems, setCartItems] = useState(() => {
     const stored = localStorage.getItem("cart");
     return stored ? JSON.parse(stored) : [];
   });
   const [showCheckout, setShowCheckout] = useState(false);
 
-  // const [showOtpModal, setShowOtpModal] = useState(false);
-  // const [otpVerified, setOtpVerified] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
 
   const updateCart = (items) => {
     setCartItems(items);
@@ -385,28 +386,30 @@ export default function CombinedCartCheckout() {
     setCartItems([]);
     localStorage.removeItem("cart");
     setShowCheckout(false);
-    setOtpVerified(false);
+  };
+
+  // Show Google Sign-In modal before checkout if not authenticated
+  const handleProceedToCheckout = () => {
+    if (isAuthenticated()) {
+      // User is already logged in, go directly to checkout
+      setShowCheckout(true);
+    } else {
+      // User not logged in, show login modal
+      setShowOtpModal(true);
+    }
   };
 
 
-  // Show OTP modal before checkout (disabled, go directly to form)
-  const handleProceedToCheckout = () => {
+  // Called when Google Sign-In is successful
+  const handleOtpSuccess = () => {
+    setShowOtpModal(false);
     setShowCheckout(true);
   };
 
 
-  // // Called when OTP is successfully verified
-  // const handleOtpSuccess = () => {
-  //   setShowOtpModal(false);
-  //   setOtpVerified(true);
-  //   setShowCheckout(true);
-  // };
-
-
-  // Hide checkout form and reset OTP state on close
+  // Hide checkout form on close
   const handleCheckoutClose = () => {
     setShowCheckout(false);
-    // setOtpVerified(false);
   };
 
   return (
@@ -420,21 +423,17 @@ export default function CombinedCartCheckout() {
         />
       </main>
 
-
-      {/* OTP Modal (disabled) */}
-      {/*
+      {/* Google Sign-In Modal */}
       {showOtpModal && (
         <div className="modal-overlay" style={{zIndex: 2000}}>
-          <div className="modal-content" style={{maxWidth: 400}}>
+          <div className="modal-content" style={{maxWidth: 480, padding: 0, overflow: 'hidden'}}>
             <button className="modal-close" onClick={() => setShowOtpModal(false)}><X size={24} /></button>
-            <OtpLogin onSuccess={handleOtpSuccess} />
+            <GoogleSignIn onSuccess={handleOtpSuccess} />
           </div>
         </div>
       )}
-      */}
 
-
-      {/* Checkout Form Modal (directly after Proceed to Checkout) */}
+      {/* Checkout Form Modal (only after Google Sign-In verified) */}
       {showCheckout && (
         <CheckoutForm
           showCheckout={showCheckout}

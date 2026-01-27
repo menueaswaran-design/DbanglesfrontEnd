@@ -46,9 +46,52 @@
 .productmodal-description-box { margin-bottom: 24px; padding-right: 20px; }
 .productmodal-description-text { font-size: 15px; line-height: 1.7; color: #444; }
 
+/* --- SIZE SELECTION --- */
+.productmodal-size-section { margin: 24px 0; }
+.size-label { font-size: 15px; font-weight: 600; color: #222; margin-bottom: 12px; }
+.size-options { display: flex; gap: 10px; flex-wrap: wrap; }
+.size-btn { 
+  padding: 10px 18px; 
+  border: 2px solid #ddd; 
+  background: #fff; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  font-size: 14px; 
+  font-weight: 600; 
+  color: #555;
+  transition: all 0.2s ease;
+}
+.size-btn:hover { border-color: #000; color: #000; }
+.size-btn.selected { 
+  background: #000; 
+  color: #fff; 
+  border-color: #000; 
+}
+
+.productmodal-save-text { font-size: 14px; color: #2e7d32; margin-top: 8px; font-weight: 500; }
+
+/* --- NOTE BOX --- */
+.productmodal-note-box {
+  padding: 16px 0;
+  margin: 20px 0;
+}
+
+.productmodal-note-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #000;
+  margin: 0;
+}
+
+.productmodal-note-text strong {
+  font-weight: 900;
+  color: #000;
+}
+
 /* --- BUTTONS --- */
 .productmodal-button-group { display: flex; gap: 16px; margin-top: 30px; }
-.productmodal-add-btn { background: #000; color: #fff; flex: 1; padding: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; border: none; }
+.productmodal-add-btn { background: #000; color: #fff; flex: 1; padding: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; border: none; transition: all 0.3s ease; }
+.productmodal-add-btn:disabled { background: #9ca3af; cursor: not-allowed; opacity: 0.7; }
 .productmodal-buy-btn { background: #ff9f00; color: #fff; flex: 1; padding: 16px; font-weight: 700; border-radius: 8px; cursor: pointer; border: none; }
 
 /* --- RELATED PRODUCTS (IMPROVED LAYOUT) --- */
