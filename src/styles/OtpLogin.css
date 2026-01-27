@@ -1,0 +1,44 @@
+/* .otp-login-container {
+  max-width: 350px;
+  margin: 40px auto;
+  padding: 2rem;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.otp-login-container h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+.otp-login-container input {
+  width: 100%;
+  padding: 0.7rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.otp-login-container button {
+  width: 100%;
+  padding: 0.7rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.otp-login-container button:disabled {
+  background: #b3d1ff;
+  cursor: not-allowed;
+}
+.otp-login-container p {
+  margin-top: 1rem;
+  color: #d9534f;
+  font-weight: 500;
+} */

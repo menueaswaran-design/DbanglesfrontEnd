@@ -2,6 +2,7 @@ import React from "react";
 import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
 import CheckoutForm from "./CheckoutForm";
+// import OtpLogin from "./OtpLogin";
 import { useLocation } from "react-router-dom";
 import { useCart } from "./CartContext";
 import {useState} from "react";
@@ -372,6 +373,9 @@ export default function CombinedCartCheckout() {
   });
   const [showCheckout, setShowCheckout] = useState(false);
 
+  // const [showOtpModal, setShowOtpModal] = useState(false);
+  // const [otpVerified, setOtpVerified] = useState(false);
+
   const updateCart = (items) => {
     setCartItems(items);
     localStorage.setItem("cart", JSON.stringify(items));
@@ -381,27 +385,64 @@ export default function CombinedCartCheckout() {
     setCartItems([]);
     localStorage.removeItem("cart");
     setShowCheckout(false);
+    setOtpVerified(false);
+  };
+
+
+  // Show OTP modal before checkout (disabled, go directly to form)
+  const handleProceedToCheckout = () => {
+    setShowCheckout(true);
+  };
+
+
+  // // Called when OTP is successfully verified
+  // const handleOtpSuccess = () => {
+  //   setShowOtpModal(false);
+  //   setOtpVerified(true);
+  //   setShowCheckout(true);
+  // };
+
+
+  // Hide checkout form and reset OTP state on close
+  const handleCheckoutClose = () => {
+    setShowCheckout(false);
+    // setOtpVerified(false);
   };
 
   return (
     <div className="app-shell">
-      
-      
       <main className="main-view">
         <Cart
           cartItems={cartItems}
           updateCart={updateCart}
-          onCheckout={() => setShowCheckout(true)}
+          onCheckout={handleProceedToCheckout}
           showCheckout={showCheckout}
         />
       </main>
 
-      <CheckoutForm
-        showCheckout={showCheckout}
-        onClose={() => setShowCheckout(false)}
-        cartItems={cartItems}
-        onSuccess={handleOrderSuccess}
-      />
+
+      {/* OTP Modal (disabled) */}
+      {/*
+      {showOtpModal && (
+        <div className="modal-overlay" style={{zIndex: 2000}}>
+          <div className="modal-content" style={{maxWidth: 400}}>
+            <button className="modal-close" onClick={() => setShowOtpModal(false)}><X size={24} /></button>
+            <OtpLogin onSuccess={handleOtpSuccess} />
+          </div>
+        </div>
+      )}
+      */}
+
+
+      {/* Checkout Form Modal (directly after Proceed to Checkout) */}
+      {showCheckout && (
+        <CheckoutForm
+          showCheckout={showCheckout}
+          onClose={handleCheckoutClose}
+          cartItems={cartItems}
+          onSuccess={handleOrderSuccess}
+        />
+      )}
 
       <style>{`
         .app-shell { min-height: 100vh; background: #f8f9fa; font-family: sans-serif; }

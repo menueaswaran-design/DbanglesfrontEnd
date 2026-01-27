@@ -11,6 +11,7 @@ import './App.css';
 import ProductModal from './components/Productmodal';
 import Loader from './components/Loader';
 import WhatsappFloatingButton from './components/WhatsappFloatingButton';
+// import OtpLogin from './components/OtpLogin';
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [productsData, setProductsData] = useState({ bangles: [], dresses: [] });
@@ -149,6 +150,7 @@ function App() {
           <Route path="/" element={<AppContent />} />
           <Route path="/cart" element={<Cart />} />
           <Route path='/product/:productid' element={<ProductModal />} />
+          {/* <Route path='/login' element={<OtpLogin />} /> */}
           {/* <Route path='/orders' element={<Orders />} /> */}
         </Routes>
       </Router>
