@@ -4,14 +4,53 @@ import "../styles/ProductCard.css";
 
 function ProductCard({ product, onView }) {
   const [message, setMessage] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
   const { cart, addToCart } = useCart();
 
-  const isInCart = cart.some((item) => item.id === product.id);
+  const isBangle = product.productType === "bangles";
+  const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
+
+  // Initialize selectedSize when product loads
+  React.useEffect(() => {
+    if (hasSizeVariants && !selectedSize) {
+      setSelectedSize(product.sizeVariants[0].size);
+    }
+  }, [product.id, hasSizeVariants]);
+
+  // Calculate price based on selected size
+  const getCurrentPrices = () => {
+    if (!hasSizeVariants || !selectedSize) {
+      return {
+        originalPrice: product.originalPrice,
+        discountedPrice: product.discountedPrice
+      };
+    }
+
+    const variant = product.sizeVariants.find(v => v.size === selectedSize);
+    if (!variant) {
+      return {
+        originalPrice: product.originalPrice,
+        discountedPrice: product.discountedPrice
+      };
+    }
+
+    return {
+      originalPrice: variant.originalPrice || product.originalPrice,
+      discountedPrice: variant.discountedPrice || product.discountedPrice
+    };
+  };
+
+  const { originalPrice, discountedPrice } = getCurrentPrices();
+
+  const isInCart = cart.some((item) => {
+    if (hasSizeVariants) {
+      return item.id === product.id && item.selectedSize === selectedSize;
+    }
+    return item.id === product.id;
+  });
 
   const discount = Math.round(
-    ((product.originalPrice - product.discountedPrice) /
-      product.originalPrice) *
-      100
+    ((originalPrice - discountedPrice) / originalPrice) * 100
   );
 
   const showMessage = (text, type) => {
@@ -29,7 +68,14 @@ function ProductCard({ product, onView }) {
       return;
     }
 
-    addToCart(product);
+    const cartItem = {
+      ...product,
+      selectedSize: hasSizeVariants ? selectedSize : null,
+      originalPrice,
+      discountedPrice
+    };
+
+    addToCart(cartItem);
     showMessage("Added to cart", "cart-success");
   };
 
@@ -48,14 +94,38 @@ function ProductCard({ product, onView }) {
 
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>
-        <p className="product-description">{product.description}</p>
+        <p className="product-description">
+          {product.description?.replace(/\n/g, " ").trim()}
+        </p>
+
+        {hasSizeVariants && (
+          <div className="size-selector">
+            <label className="size-label">Size:</label>
+            <div className="size-options">
+              {product.sizeVariants.map((variant) => (
+                <button
+                  key={variant.size}
+                  className={`size-option ${
+                    selectedSize === variant.size ? "selected" : ""
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedSize(variant.size);
+                  }}
+                >
+                  {variant.size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="product-price">
           <span className="discounted-price">
-            ₹{product.discountedPrice}
+            ₹{discountedPrice}
           </span>
           <span className="original-price">
-            ₹{product.originalPrice}
+            ₹{originalPrice}
           </span>
           <span className="discount-percent">
             {discount}% OFF

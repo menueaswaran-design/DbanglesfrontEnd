@@ -66,6 +66,52 @@
   overflow: hidden;
 }
 
+/* ---------------- Size Selector ---------------- */
+
+.size-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.size-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.size-option {
+  min-width: 50px;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.size-option:hover {
+  border-color: #0f766e;
+  background: #f0fdfa;
+}
+
+.size-option.selected {
+  border-color: #0f766e;
+  background: #0f766e;
+  color: white;
+  font-weight: 600;
+}
+
 /* ---------------- Updated Price Section ---------------- */
 
 .product-price {

@@ -17,8 +17,22 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     setCart((prevCart) => {
-      if (prevCart.some((item) => item.id === product.id)) return prevCart;
-      return [...prevCart, { ...product, quantity: 1 }];
+      // For products with size, check both id and selectedSize
+      const existingItem = prevCart.find((item) => {
+        if (product.selectedSize) {
+          return item.id === product.id && item.selectedSize === product.selectedSize;
+        }
+        return item.id === product.id;
+      });
+
+      if (existingItem) return prevCart;
+
+      // Generate unique cart ID for size variants
+      const cartId = product.selectedSize 
+        ? `${product.id}-${product.selectedSize}`
+        : product.id;
+
+      return [...prevCart, { ...product, cartId, quantity: 1 }];
     });
   };
 
