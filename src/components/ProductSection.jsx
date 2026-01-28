@@ -7,6 +7,12 @@ import { Link } from 'react-router-dom';
 function ProductSection({ title, products, id, showCategories, categories }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const Navigate = useNavigate();
+
+  // Extract unique categories from products and combine with static categories
+  const productCategories = [...new Set(products.map(product => product.category).filter(Boolean))];
+  const staticCategories = categories || [];
+  const allCategories = ['All', ...new Set([...staticCategories.filter(c => c !== 'All'), ...productCategories])];
+
   // Filter products based on selected category
   const filteredProducts = selectedCategory === 'All' 
     ? products 
@@ -20,9 +26,9 @@ function ProductSection({ title, products, id, showCategories, categories }) {
         <p className="section-subtitle">Handcrafted with love and care</p>
       </div>
 
-      {showCategories && categories && (
+      {showCategories && (
         <div className="category-filter">
-          {categories.map((category) => (
+          {allCategories.map((category) => (
             <button
               key={category}
               className={`category-btn ${selectedCategory === category ? 'active' : ''}`}

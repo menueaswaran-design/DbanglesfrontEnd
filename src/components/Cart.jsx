@@ -56,7 +56,7 @@ const Cart = ({ onCheckout, showCheckout }) => {
   );
 
   const totalDiscount = totalOriginal - totalDiscounted;
-  const shipping = displayItems.length > 0 ? 50 : 0;
+  const shipping = displayItems.length > 0 ? 70 : 0;
   const grandTotal = totalDiscounted + shipping;
 
   if (displayItems.length === 0) {
@@ -85,6 +85,11 @@ const Cart = ({ onCheckout, showCheckout }) => {
                 <img src={item.image} alt={item.name} className="item-img" />
                 <div className="item-details">
                   <h3 className="item-name">{item.name}</h3>
+                  {item.selectedSize && (
+                    <div className="item-size" style={{ fontSize: '14px', color: '#666', marginBottom: '4px' }}>
+                      Size: <strong>{item.selectedSize}</strong>
+                    </div>
+                  )}
                   <div className="price-row">
                     <span className="current-price">
                       ₹{item.discountedPrice}
@@ -142,7 +147,7 @@ const Cart = ({ onCheckout, showCheckout }) => {
               {displayItems.map((item) => (
                 <div key={item.id} className="summary-line">
                   <span>
-                    {item.name} (x{item.quantity})
+                    {item.name}{item.selectedSize ? ` (Size: ${item.selectedSize})` : ''} (x{item.quantity})
                   </span>
                   <span>
                     <span

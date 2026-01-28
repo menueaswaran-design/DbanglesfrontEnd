@@ -216,11 +216,13 @@ function ProductModal() {
 
           <p className="productmodal-save-text">Inclusive of all taxes. You save ₹{originalPrice - discountedPrice}</p>
 
-          <div className="productmodal-note-box">
-            <p className="productmodal-note-text">
-              <strong>NOTE:</strong> The bangles we will start to make only after the payment. If any mistake in our side the amount is refund to you. If any queries WhatsApp or Instagram DM. We will reach out to you incase any clarification. Customization available.
-            </p>
-          </div>
+          {product.note && (
+            <div className="productmodal-note-box">
+              <p className="productmodal-note-text">
+                <strong>NOTE:</strong> {product.note.replace(/^NOTE\s*:\s*/i, '')}
+              </p>
+            </div>
+          )}
 
           <div className="productmodal-button-group">
             <button 

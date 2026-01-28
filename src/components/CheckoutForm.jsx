@@ -22,6 +22,14 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
   });
   const [errors, setErrors] = useState({});
 
+  // Calculate totals
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.discountedPrice * item.quantity,
+    0
+  );
+  const shipping = cartItems.length > 0 ? 70 : 0;
+  const grandTotal = subtotal + shipping;
+
   // Check authentication on mount
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -109,6 +117,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
         name: item.name,
         quantity: item.quantity,
         price: item.discountedPrice,
+        selectedSize: item.selectedSize || null,
       })),
     };
     console.log('Submitting order payload:', orderPayload);
@@ -292,6 +301,37 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
             {errors.submit && (
               <div style={{ color: "red", fontSize: 14, marginBottom: 8, textAlign: 'center' }}>{errors.submit}</div>
             )}
+
+            {/* Order Summary */}
+            <div style={{ 
+              background: '#f8fafc', 
+              padding: '16px', 
+              borderRadius: '8px', 
+              marginBottom: '16px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', color: '#1e293b' }}>Order Summary</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px' }}>
+                <span>Subtotal</span>
+                <span>₹{subtotal}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px' }}>
+                <span>Shipping</span>
+                <span>₹{shipping}</span>
+              </div>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                paddingTop: '8px', 
+                borderTop: '1px solid #e2e8f0',
+                fontWeight: '600',
+                fontSize: '16px',
+                color: '#0f766e'
+              }}>
+                <span>Total</span>
+                <span>₹{grandTotal}</span>
+              </div>
+            </div>
             
             <button
               className="confirm-btn"
