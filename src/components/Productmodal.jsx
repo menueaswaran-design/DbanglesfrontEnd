@@ -16,8 +16,7 @@ function ProductModal() {
   const { addToCart, cart } = useCart();
   const [cartMessage, setCartMessage] = useState("");
   
-  const bangleSizes = ["2.2", "2.4", "2.6", "2.8", "2.10"];
-  const [selectedSize, setSelectedSize] = useState("2.6");
+  const [selectedSize, setSelectedSize] = useState(null);
 
   const fetchproductbyId = async () => {
     setLoading(true); 
@@ -25,7 +24,16 @@ function ProductModal() {
       const response = await fetch(`https://dbangles.vercel.app/api/products/${productid}`);
       if (!response.ok) throw new Error("Failed to fetch product");
       const data = await response.json();
-      setProduct(data.product);
+      const fetchedProduct = data.product;
+      setProduct(fetchedProduct);
+      
+      // Initialize selectedSize based on productType and sizeVariants
+      const isBangle = fetchedProduct.productType === "bangles";
+      const hasSizeVariants = isBangle && fetchedProduct.sizeVariants?.length > 0;
+      if (hasSizeVariants) {
+        setSelectedSize(fetchedProduct.sizeVariants[0].size);
+      }
+      
       // Fetch related after product is found
       fetchRelatedProducts();
       setLoading(false);
@@ -117,7 +125,38 @@ function ProductModal() {
     );
   }
 
-  const discount = Math.round(((product.originalPrice - product.discountedPrice) / product.originalPrice) * 100);
+  // Calculate price based on selected size
+  const getCurrentPrices = () => {
+    if (!product) {
+      return { originalPrice: 0, discountedPrice: 0 };
+    }
+
+    const isBangle = product.productType === "bangles";
+    const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
+
+    if (!hasSizeVariants || !selectedSize) {
+      return {
+        originalPrice: product.originalPrice,
+        discountedPrice: product.discountedPrice
+      };
+    }
+
+    const variant = product.sizeVariants.find(v => v.size === selectedSize);
+    if (!variant) {
+      return {
+        originalPrice: product.originalPrice,
+        discountedPrice: product.discountedPrice
+      };
+    }
+
+    return {
+      originalPrice: variant.originalPrice || product.originalPrice,
+      discountedPrice: variant.discountedPrice || product.discountedPrice
+    };
+  };
+
+  const { originalPrice, discountedPrice } = getCurrentPrices();
+  const discount = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
 
   return (
     <div className="productmodal-page">
@@ -152,17 +191,17 @@ function ProductModal() {
           </div>
 
           {/* Size Selection for Bangles */}
-          {product.category?.toLowerCase().includes('bangle') && (
+          {product.productType === "bangles" && product.sizeVariants?.length > 0 && (
             <div className="productmodal-size-section">
               <p className="size-label">Select Size:</p>
               <div className="size-options">
-                {bangleSizes.map((size) => (
+                {product.sizeVariants.map((variant) => (
                   <button
-                    key={size}
-                    className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
-                    onClick={() => setSelectedSize(size)}
+                    key={variant.size}
+                    className={`size-btn ${selectedSize === variant.size ? 'selected' : ''}`}
+                    onClick={() => setSelectedSize(variant.size)}
                   >
-                    {size}
+                    {String(variant.size).replace(/^2\.1$/, '2.10')}
                   </button>
                 ))}
               </div>
@@ -170,12 +209,12 @@ function ProductModal() {
           )}
 
           <div className="productmodal-price-row">
-            <span className="productmodal-discounted">₹{product.discountedPrice}</span>
-            <span className="productmodal-original">₹{product.originalPrice}</span>
+            <span className="productmodal-discounted">₹{discountedPrice}</span>
+            <span className="productmodal-original">₹{originalPrice}</span>
             {discount > 0 && <span className="productmodal-percent">{discount}% OFF</span>}
           </div>
 
-          <p className="productmodal-save-text">Inclusive of all taxes. You save ₹{product.originalPrice - product.discountedPrice}</p>
+          <p className="productmodal-save-text">Inclusive of all taxes. You save ₹{originalPrice - discountedPrice}</p>
 
           <div className="productmodal-note-box">
             <p className="productmodal-note-text">
@@ -186,20 +225,40 @@ function ProductModal() {
           <div className="productmodal-button-group">
             <button 
               className="productmodal-add-btn" 
-              disabled={cart.some(item => item.id === product.id)}
+              disabled={cart.some(item => item.id === product.id && (!selectedSize || item.selectedSize === selectedSize))}
               onClick={() => {
-                if (cart.some(item => item.id === product.id)) {
+                const isBangle = product.productType === "bangles";
+                const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
+                const isAlreadyInCart = cart.some(item => item.id === product.id && (!selectedSize || item.selectedSize === selectedSize));
+                
+                if (isAlreadyInCart) {
                   setCartMessage("Already in cart");
                 } else {
-                  addToCart({ ...product, selectedSize });
+                  const cartItem = {
+                    ...product,
+                    selectedSize: hasSizeVariants ? selectedSize : null,
+                    originalPrice,
+                    discountedPrice
+                  };
+                  addToCart(cartItem);
                   setCartMessage("Added to cart");
                 }
                 setTimeout(() => setCartMessage(""), 2000);
               }}
             >
-              {cart.some(item => item.id === product.id) ? "In Cart" : "Add to Cart"}
+              {cart.some(item => item.id === product.id && (!selectedSize || item.selectedSize === selectedSize)) ? "In Cart" : "Add to Cart"}
             </button>
-            <button onClick={() => { navigate('/cart', { state: { product: { ...product, selectedSize } } })}} className="productmodal-buy-btn">Buy Now</button>
+            <button onClick={() => { 
+              const isBangle = product.productType === "bangles";
+              const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
+              const cartItem = {
+                ...product,
+                selectedSize: hasSizeVariants ? selectedSize : null,
+                originalPrice,
+                discountedPrice
+              };
+              navigate('/cart', { state: { product: cartItem } });
+            }} className="productmodal-buy-btn">Buy Now</button>
           </div>
           {cartMessage && <p className="productmodal-cart-feedback">{cartMessage}</p>}
         </div>

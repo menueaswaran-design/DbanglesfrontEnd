@@ -55,15 +55,16 @@
 }
 
 .product-description {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
-  margin: 0;
-  flex: 1;
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0.25rem 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 1.3rem;
+  font-weight: 400;
 }
 
 /* ---------------- Size Selector ---------------- */
@@ -249,7 +250,9 @@
   }
 
   .product-description {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
+    color: #374151;
+    min-height: 1.5rem;
   }
 
   .discounted-price {
