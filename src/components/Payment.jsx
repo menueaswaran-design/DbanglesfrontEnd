@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import scanner from "../assets/scanner.jpeg";
 import "../styles/payment.css";
 
 function Payment({ phoneNumber }) {
+  const { cart } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [orderId, setOrderId] = useState("");
@@ -31,8 +33,18 @@ function Payment({ phoneNumber }) {
     setOrderId("");
 
     try {
+      // Collect product IDs from cart
+      const productIds = cart.map(item => item.id);
+
       const response = await fetch(
-        `https://dbangles.vercel.app/api/orders/${phone}`
+        `https://dbangles.vercel.app/api/orders/${phone}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ productIds })
+        }
       );
 
       if (!response.ok) throw new Error("Failed");
@@ -59,6 +71,11 @@ function Payment({ phoneNumber }) {
     alert("Order ID copied ✅ Paste it in payment notes");
   };
 
+  const handleUpiCopy = () => {
+    navigator.clipboard.writeText("9384957824@pthdfc");
+    alert("UPI ID copied ✅");
+  };
+
   return (
     <div className="payment-wrapper">
       <h2 className="payment-title">Complete Your Payment</h2>
@@ -69,6 +86,14 @@ function Payment({ phoneNumber }) {
 
       <div className="scanner-box">
         <img src={scanner} alt="Scanner" className="scanner-image" />
+        <div className="upi-row">
+          <a href="upi://pay?pa=9384957824@pthdfc" className="upi-id">
+            9384957824@pthdfc
+          </a>
+          <button onClick={handleUpiCopy} className="copy-btn">
+            Copy
+          </button>
+        </div>
       </div>
 
       <div className="order-box">

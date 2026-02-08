@@ -78,6 +78,31 @@
   border-radius: 8px;
 }
 
+.upi-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.upi-id {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.upi-id:hover {
+  color: #000;
+}
+
 .order-box {
   margin-top: 25px;
   padding: 15px;
