@@ -404,17 +404,15 @@ export default function CombinedCartCheckout() {
     }
   };
 
+  const { cart } = useCart();
 
-  // Called when Google Sign-In is successful
+  const handleCheckoutClose = () => {
+    setShowCheckout(false);
+  };
+
   const handleOtpSuccess = () => {
     setShowOtpModal(false);
     setShowCheckout(true);
-  };
-
-
-  // Hide checkout form on close
-  const handleCheckoutClose = () => {
-    setShowCheckout(false);
   };
 
   return (
@@ -443,8 +441,7 @@ export default function CombinedCartCheckout() {
         <CheckoutForm
           showCheckout={showCheckout}
           onClose={handleCheckoutClose}
-          cartItems={cartItems}
-          onSuccess={handleOrderSuccess}
+          cartItems={cart}
         />
       )}
 
