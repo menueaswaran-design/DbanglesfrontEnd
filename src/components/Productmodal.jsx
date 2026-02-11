@@ -24,7 +24,7 @@ function ProductModal() {
       const response = await fetch(`https://dbangles.vercel.app/api/products/${productid}`);
       if (!response.ok) throw new Error("Failed to fetch product");
       const data = await response.json();
-      const fetchedProduct = data.product;
+      const fetchedProduct = { ...data.product, id: data.product._id || data.product.id };
       setProduct(fetchedProduct);
       
       // Initialize selectedSize based on productType and sizeVariants
@@ -157,6 +157,7 @@ function ProductModal() {
 
   const { originalPrice, discountedPrice } = getCurrentPrices();
   const discount = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100);
+  const isSold = product?.label?.toLowerCase() === 'sold-out';
 
   return (
     <div className="productmodal-page">
@@ -225,42 +226,50 @@ function ProductModal() {
           )}
 
           <div className="productmodal-button-group">
-            <button 
-              className="productmodal-add-btn" 
-              disabled={cart.some(item => item.id === product.id && (!selectedSize || item.selectedSize === selectedSize))}
-              onClick={() => {
-                const isBangle = product.productType === "bangles";
-                const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
-                const isAlreadyInCart = cart.some(item => item.id === product.id && (!selectedSize || item.selectedSize === selectedSize));
-                
-                if (isAlreadyInCart) {
-                  setCartMessage("Already in cart");
-                } else {
+            {isSold ? (
+              <button className="productmodal-add-btn sold-out" disabled style={{flex: '1 1 100%'}}>Sold Out</button>
+            ) : (
+              <>
+                <button 
+                  className="productmodal-add-btn" 
+                  disabled={cart.some(item => String(item.id) === String(product.id))}
+                  onClick={() => {
+                    const isBangle = product.productType === "bangles";
+                    const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
+                    const isAlreadyInCart = cart.some(item => String(item.id) === String(product.id));
+                    
+                    if (isAlreadyInCart) {
+                      setCartMessage("Already in cart");
+                    } else {
+                      const cartItem = {
+                        ...product,
+                        id: product.id,
+                        selectedSize: hasSizeVariants ? selectedSize : null,
+                        originalPrice,
+                        discountedPrice
+                      };
+                      addToCart(cartItem);
+                      setCartMessage("Added to cart");
+                    }
+                    setTimeout(() => setCartMessage(""), 2000);
+                  }}
+                >
+                  {cart.some(item => String(item.id) === String(product.id)) ? "In Cart" : "Add to Cart"}
+                </button>
+                <button onClick={() => { 
+                  const isBangle = product.productType === "bangles";
+                  const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
                   const cartItem = {
                     ...product,
+                    id: product.id,
                     selectedSize: hasSizeVariants ? selectedSize : null,
                     originalPrice,
                     discountedPrice
                   };
-                  addToCart(cartItem);
-                  setCartMessage("Added to cart");
-                }
-                setTimeout(() => setCartMessage(""), 2000);
-              }}
-            >
-              {cart.some(item => item.id === product.id && (!selectedSize || item.selectedSize === selectedSize)) ? "In Cart" : "Add to Cart"}
-            </button>
-            <button onClick={() => { 
-              const isBangle = product.productType === "bangles";
-              const hasSizeVariants = isBangle && product.sizeVariants?.length > 0;
-              const cartItem = {
-                ...product,
-                selectedSize: hasSizeVariants ? selectedSize : null,
-                originalPrice,
-                discountedPrice
-              };
-              navigate('/cart', { state: { product: cartItem } });
-            }} className="productmodal-buy-btn">Buy Now</button>
+                  navigate('/cart', { state: { product: cartItem } });
+                }} className="productmodal-buy-btn">Buy Now</button>
+              </>
+            )}
           </div>
           {cartMessage && <p className="productmodal-cart-feedback">{cartMessage}</p>}
         </div>

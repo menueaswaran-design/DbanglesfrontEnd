@@ -10,6 +10,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openscanner, setOpenscanner] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState("");
   const [form, setForm] = useState({
     customerName: "",
     phoneNumber: "",
@@ -141,6 +142,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
 
       if (res.ok && data.success) {
         console.log('✅ Order created successfully with ID:', data.orderId);
+        setCreatedOrderId(data.orderId);
         setOpenscanner(true);
       } else {
         console.error('❌ Order creation failed:', data.error);
@@ -166,7 +168,7 @@ const CheckoutForm = ({ showCheckout, onClose, cartItems }) => {
         </button>
 
         {openscanner ? (
-          <Payment phoneNumber={form.phoneNumber} />
+          <Payment phoneNumber={form.phoneNumber} orderId={createdOrderId} />
         ) : (
           <>
             <h2 className="modal-title">Delivery Details</h2>

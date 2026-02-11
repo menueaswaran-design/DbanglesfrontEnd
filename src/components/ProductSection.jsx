@@ -50,7 +50,7 @@ function ProductSection({ title, products, id, showCategories, categories }) {
             <ProductCard
               key={product.id}
               product={product}
-              onView={(prod) => Navigate(`/product/${prod.id}`)}
+              onView={(prod) => Navigate(`/product/${prod._id || prod.id}`)}
             />
           ))}
         </div>

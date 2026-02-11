@@ -17,34 +17,38 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     setCart((prevCart) => {
+      // Normalize product ID
+      const productId = String(product.id || product._id);
+      
       // For products with size, check both id and selectedSize
       const existingItem = prevCart.find((item) => {
+        const itemId = String(item.id || item._id);
         if (product.selectedSize) {
-          return item.id === product.id && item.selectedSize === product.selectedSize;
+          return itemId === productId && item.selectedSize === product.selectedSize;
         }
-        return item.id === product.id;
+        return itemId === productId;
       });
 
       if (existingItem) return prevCart;
 
       // Generate unique cart ID for size variants
       const cartId = product.selectedSize 
-        ? `${product.id}-${product.selectedSize}`
-        : product.id;
+        ? `${productId}-${product.selectedSize}`
+        : productId;
 
-      return [...prevCart, { ...product, cartId, quantity: 1 }];
+      return [...prevCart, { ...product, id: productId, cartId, quantity: 1 }];
     });
   };
 
   const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) => prevCart.filter((item) => String(item.id || item._id) !== String(id)));
   };
 
   // Update quantity for a cart item
   const updateQuantity = (id, delta) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === id && (item.quantity + delta > 0)
+        String(item.id || item._id) === String(id) && (item.quantity + delta > 0)
           ? { ...item, quantity: item.quantity + delta }
           : item
       )

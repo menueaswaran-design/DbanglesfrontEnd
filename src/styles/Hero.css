@@ -54,10 +54,9 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+  background: transparent;
   padding: var(--spacing-2xl) var(--spacing-lg);
   margin-top: 60px;
-  border-bottom: 1px solid var(--border-color);
   overflow: hidden;
 }
 

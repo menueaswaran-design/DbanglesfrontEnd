@@ -7,6 +7,7 @@
       "originalPrice": 2499,
       "discountedPrice": 1799,
       "category": "Kundan bangles",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop"
     },
     {
@@ -16,6 +17,7 @@
       "originalPrice": 3999,
       "discountedPrice": 2999,
       "category": "Kundan bangles",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=500&fit=crop"
     },
     {
@@ -25,6 +27,7 @@
       "originalPrice": 1999,
       "discountedPrice": 1499,
       "category": "Bracelets",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=500&fit=crop"
     },
     {
@@ -43,6 +46,7 @@
       "originalPrice": 2799,
       "discountedPrice": 1999,
       "category": "Bracelets",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop"
     },
     {
@@ -52,6 +56,7 @@
       "originalPrice": 3499,
       "discountedPrice": 2699,
       "category": "Kundan bangles",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=500&fit=crop"
     },
     {
@@ -88,6 +93,7 @@
       "originalPrice": 1499,
       "discountedPrice": 1099,
       "category": "Glass bangles",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=500&h=500&fit=crop"
     },
     {
@@ -117,6 +123,7 @@
       "originalPrice": 3499,
       "discountedPrice": 2499,
       "category": "Sarees",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=500&fit=crop"
     },
     {
@@ -144,6 +151,7 @@
       "originalPrice": 7999,
       "discountedPrice": 5999,
       "category": "Sarees",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=500&h=500&fit=crop"
     },
     {
@@ -153,6 +161,7 @@
       "originalPrice": 8999,
       "discountedPrice": 6999,
       "category": "Sarees",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1583391733981-12e20ed59a1e?w=500&h=500&fit=crop"
     },
     {
@@ -171,6 +180,7 @@
       "originalPrice": 12999,
       "discountedPrice": 9999,
       "category": "Sarees",
+      "label": "recommended",
       "image": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&h=500&fit=crop"
     },
     {

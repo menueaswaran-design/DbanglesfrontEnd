@@ -22,6 +22,39 @@
   background: var(--bg-light);
 }
 
+/* ---------------- Product Labels ---------------- */
+
+.product-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+/* Recommended Label - Professional Blue */
+.product-label-recommended {
+  background: #2563eb;
+  color: white;
+}
+
+/* Best Selling Label - Professional Orange */
+.product-label-best-selling {
+  background: #ea580c;
+  color: white;
+}
+
+/* Sold Out Label - Professional Red */
+.product-label-sold-out {
+  background: #dc2626;
+  color: white;
+}
+
 .product-image {
   position: absolute;
   top: 0;
@@ -30,6 +63,10 @@
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-slow);
+}
+
+.product-image.sold-out-blur {
+  opacity: 0.3;
 }
 
 .product-card:hover .product-image {
@@ -197,6 +234,15 @@
   color: #6b7280;
   cursor: not-allowed;
   border: 1px solid #d1d5db;
+}
+
+.add-to-cart-btn.sold-out {
+  background: #fecaca !important;
+  color: #991b1b !important;
+  cursor: not-allowed !important;
+  border: 1px solid #dc2626 !important;
+  box-shadow: none !important;
+  opacity: 0.85;
 }
 
 .add-to-cart-btn:disabled {

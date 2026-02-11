@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useCart } from "./CartContext";
 import "../styles/ProductCard.css";
 
-function ProductCard({ product, onView }) {
+function ProductCard({ product, onView, showLabel = false }) {
   const [message, setMessage] = useState(null);
   const { cart, addToCart } = useCart();
 
-  const isInCart = cart.some((item) => item.id === product.id);
+  const isInCart = cart.some((item) => String(item.id) === String(product._id || product.id));
+  const isSold = product.label?.toLowerCase() === 'sold-out';
 
   const discount = Math.round(
     ((product.originalPrice - product.discountedPrice) /
@@ -24,12 +25,18 @@ function ProductCard({ product, onView }) {
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
+    if (isSold) return;
+
     if (isInCart) {
       showMessage("Already in cart", "cart-error");
       return;
     }
 
-    addToCart(product);
+    const cartItem = {
+      ...product,
+      id: product._id || product.id
+    };
+    addToCart(cartItem);
     showMessage("Added to cart", "cart-success");
   };
 
@@ -39,10 +46,15 @@ function ProductCard({ product, onView }) {
       onClick={() => onView && onView(product)}
     >
       <div className="product-image-container">
+        {showLabel && product.label && product.label.toLowerCase() !== 'sold-out' && (
+          <div className={`product-label product-label-${product.label.toLowerCase().replace(/\s+/g, '-')}`}>
+            {product.label}
+          </div>
+        )}
         <img
           src={product.image}
           alt={product.name}
-          className="product-image"
+          className={`product-image ${isSold ? 'sold-out-blur' : ''}`}
         />
       </div>
 
@@ -72,11 +84,11 @@ function ProductCard({ product, onView }) {
         )}
 
         <button
-          className={`add-to-cart-btn ${isInCart ? "added" : ""}`}
+          className={`add-to-cart-btn ${isInCart ? "added" : ""} ${isSold ? "sold-out" : ""}`}
           onClick={handleAddToCart}
-          disabled={isInCart}
+          disabled={isInCart || isSold}
         >
-          {isInCart ? "Added to Cart" : "Add to Cart"}
+          {isSold ? "Sold Out" : isInCart ? "Added to Cart" : "Add to Cart"}
         </button>
       </div>
     </div>

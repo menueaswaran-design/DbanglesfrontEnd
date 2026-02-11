@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 import scanner from "../assets/scanner.jpeg";
 import "../styles/payment.css";
 
-function Payment({ phoneNumber }) {
+function Payment({ phoneNumber, orderId: passedOrderId }) {
   const { cart } = useCart();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [orderId, setOrderId] = useState("");
+  const [orderId, setOrderId] = useState(passedOrderId || "");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(!passedOrderId);
   const [phone, setPhone] = useState(phoneNumber || "");
 
   // Check authentication on mount
@@ -60,7 +60,7 @@ function Payment({ phoneNumber }) {
   };
 
   useEffect(() => {
-    if (phoneNumber) {
+    if (!passedOrderId && phoneNumber) {
       getOrderId();
     }
     // eslint-disable-next-line

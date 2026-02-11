@@ -3,7 +3,7 @@ import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
 import CheckoutForm from "./CheckoutForm";
 import GoogleSignIn from "./OtpLogin";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import {useState} from "react";
@@ -14,6 +14,7 @@ import WhatsappFloatingButton from "./WhatsappFloatingButton";
 // ==================== CART COMPONENT ====================
 const Cart = ({ onCheckout, showCheckout }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity } = useCart();
 
   const [buyNowQty, setBuyNowQty] = useState(1);
@@ -81,7 +82,12 @@ const Cart = ({ onCheckout, showCheckout }) => {
           <h1 className="page-title">Shopping Cart</h1>
           <div className="items-stack">
             {displayItems.map((item) => (
-              <div key={item.id} className="cart-item-card">
+              <div 
+                key={item.id} 
+                className="cart-item-card"
+                onClick={() => navigate(`/product/${item.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <img src={item.image} alt={item.name} className="item-img" />
                 <div className="item-details">
                   <h3 className="item-name">{item.name}</h3>
@@ -108,7 +114,7 @@ const Cart = ({ onCheckout, showCheckout }) => {
 
                 {/* ❗ Disable controls only if Buy Now */}
 
-                <div className="item-actions">
+                <div className="item-actions" onClick={(e) => e.stopPropagation()}>
                   <div className="qty-controls">
                     <button
                       onClick={() => decreaseQty(item.id)}

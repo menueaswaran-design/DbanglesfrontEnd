@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ProductSection from './components/ProductSection';
+import RecommendedSection from './components/RecommendedSection';
 import Cart from './components/Cart';
 import { CartProvider } from './components/CartContext';
 import { AuthProvider } from './components/AuthContext';
@@ -115,10 +116,14 @@ function AppContent() {
     );
   }
 
+  // Combine all products for recommended section
+  const allProducts = [...(productsData.bangles || []), ...(productsData.dresses || [])];
+
   return (
     <div className="app">
       <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} onCartClick={() => navigate('/cart')} />
       <Hero />
+      <RecommendedSection products={allProducts} />
       <main className="main-content">
         <ProductSection 
           title="Handmade Bangles Collection" 

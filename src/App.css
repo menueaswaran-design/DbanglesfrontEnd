@@ -23,7 +23,7 @@
 
 .main-content {
   flex: 1;
-  padding-top: 20px;
+  padding-top: 0;
 }
 
 .footer {
@@ -42,7 +42,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .main-content {
-    padding-top: 20px;
+    padding-top: 0;
   }
 }
 
