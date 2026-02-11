@@ -51,6 +51,11 @@ function ProductCard({ product, onView, showLabel = false }) {
             {product.label}
           </div>
         )}
+        {isSold && (
+          <div className="product-label product-label-sold-out">
+            SOLD OUT
+          </div>
+        )}
         <img
           src={product.image}
           alt={product.name}

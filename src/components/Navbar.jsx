@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
-import { ShoppingBag } from "lucide-react";
+import { useAuth } from "./AuthContext";
+import { ShoppingBag, LogOut } from "lucide-react";
 import "../styles/Navbar.css";
 
 function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cart } = useCart();
+  const { user, logout } = useAuth();
   const cartCount = cart.length;
   const navigate = useNavigate();
 
@@ -17,6 +19,11 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
 
   const handleCartClick = () => {
     onCartClick ? onCartClick() : navigate("/cart");
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
   };
 
   return (
@@ -57,6 +64,17 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
             >
               <ShoppingBag size={24} />
             </button>
+
+            {/* LOGOUT – DESKTOP ONLY (if logged in) */}
+            {user && (
+              <button
+                className="icon-btn logout-btn desktop-only"
+                onClick={handleLogout}
+                title="Logout"
+              >
+                <LogOut size={22} />
+              </button>
+            )}
 
             {/* SEARCH – DESKTOP ONLY */}
             <div className={`search-container ${isSearchOpen ? "active" : ""}`}>
@@ -120,6 +138,20 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
               <li><a href="/" onClick={() => setIsMobileMenuOpen(false)}>Home</a></li>
               <li><a href="#bangles" onClick={() => setIsMobileMenuOpen(false)}>Bangles</a></li>
               <li><a href="#dresses" onClick={() => setIsMobileMenuOpen(false)}>Dresses</a></li>
+              {user && (
+                <li>
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="mobile-menu-logout-btn"
+                  >
+                    <LogOut size={20} style={{marginRight: '8px'}} />
+                    Logout
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -178,6 +210,17 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick }) {
           <ShoppingBag size={26} />
           <span>Orders</span>
         </button>
+
+        {/* LOGOUT (if logged in) */}
+        {user && (
+          <button
+            className="mobile-nav-btn"
+            onClick={handleLogout}
+          >
+            <LogOut size={26} />
+            <span>Logout</span>
+          </button>
+        )}
       </div>
     </>
   );

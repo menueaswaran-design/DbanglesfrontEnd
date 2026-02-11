@@ -57,7 +57,8 @@
 }
 
 .mobile-menu ul li a,
-.mobile-menu-cart-btn {
+.mobile-menu-cart-btn,
+.mobile-menu-logout-btn {
   color: #333;
   text-decoration: none;
   font-size: 1.1rem;
@@ -68,6 +69,15 @@
   padding: 0;
   display: flex;
   align-items: center;
+}
+
+.mobile-menu-logout-btn {
+  color: #dc2626;
+  transition: color 0.2s;
+}
+
+.mobile-menu-logout-btn:hover {
+  color: #991b1b;
 }
 
 .mobile-menu-cart-btn {
@@ -202,6 +212,17 @@
 .icon-btn.track-btn:hover {
   background: #f0f9ff;
   color: #0f766e;
+}
+
+/* ================= LOGOUT BUTTON ================= */
+.icon-btn.logout-btn {
+  position: relative;
+  color: #dc2626;
+}
+
+.icon-btn.logout-btn:hover {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 /* ================= SEARCH ================= */

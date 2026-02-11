@@ -167,7 +167,12 @@ function ProductModal() {
 
         <div className="productmodal-image-section">
           <div className="productmodal-image-wrapper" style={{ position: "relative" }}>
-            <img src={product.image} alt={product.name} />
+            <img src={product.image} alt={product.name} style={isSold ? {opacity: 0.3} : {}} />
+            {isSold && (
+              <div className="product-label product-label-sold-out" style={{position: 'absolute', top: '10px', left: '10px', padding: '5px 10px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', borderRadius: '4px', zIndex: '10', background: '#dc2626', color: 'white'}}>
+                SOLD OUT
+              </div>
+            )}
             <button onClick={handleShare} className="share-icon-btn">
               <Share2 size={22} />
             </button>
