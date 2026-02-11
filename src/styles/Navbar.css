@@ -318,6 +318,14 @@
   color: #0f766e;
 }
 
+.mobile-nav-btn svg {
+  stroke: currentColor;
+}
+
+.mobile-nav-btn:last-child {
+  color: #dc2626;
+}
+
 /* CENTER SEARCH BUTTON */
 .mobile-nav-btn.search-center {
   background: #764ba2;
