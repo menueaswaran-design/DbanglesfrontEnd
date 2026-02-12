@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -110,6 +111,16 @@ const TrackOrders = () => {
   if (showLoginModal && !isAuthenticated()) {
     return (
       <>
+        <Helmet>
+          <title>Track Your Orders - DBangles | Order Status & Tracking</title>
+          <meta 
+            name="description" 
+            content="Track your handmade bangles and designer dress orders. View order status, shipping details and delivery updates." 
+          />
+          <meta name="keywords" content="track order, order status, delivery tracking, DBangles orders" />
+          <meta name="robots" content="noindex, nofollow" />
+          <link rel="canonical" href="https://www.dbangles.in/track-orders" />
+        </Helmet>
         <Navbar />
         <div className="track-orders-container">
           <div className="login-required-wrapper">
@@ -140,6 +151,16 @@ const TrackOrders = () => {
 
   return (
     <>
+      <Helmet>
+        <title>My Orders - DBangles | Order History & Tracking</title>
+        <meta 
+          name="description" 
+          content="View and track all your DBangles orders. Check order status, delivery updates and order history." 
+        />
+        <meta name="keywords" content="my orders, order history, track orders, DBangles" />
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href="https://www.dbangles.in/track-orders" />
+      </Helmet>
       <Navbar />
       <div className="track-orders-container">
         <div className="track-orders-header">

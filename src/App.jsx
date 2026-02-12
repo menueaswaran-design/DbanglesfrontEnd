@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { Helmet } from 'react-helmet';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
@@ -121,6 +121,39 @@ function AppContent() {
 
   return (
     <div className="app">
+      <Helmet>
+        <title>DBangles - Handmade Bangles & Designer Dresses | Authentic Handcrafted Jewelry</title>
+        <meta 
+          name="description" 
+          content="Shop exclusive handmade bangles, kundan bangles, glass bangles, designer sarees and dresses. Authentic handcrafted jewelry with modern elegance. Free shipping across India." 
+        />
+        <meta name="keywords" content="handmade bangles, kundan bangles, glass bangles, designer dresses, sarees, handcrafted jewelry, traditional bangles, hair accessories, bracelets" />
+        <meta property="og:title" content="DBangles - Handmade Bangles & Designer Dresses" />
+        <meta property="og:description" content="Discover unique, handcrafted bangles and designer dresses that blend tradition with modern elegance." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://www.dbangles.in/" />
+        
+        {/* Structured Data for Organization */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Store",
+            "name": "DBangles",
+            "description": "Handmade bangles and designer dresses with authentic traditional design",
+            "url": "https://www.dbangles.in",
+            "logo": "https://www.dbangles.in/logo.png",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+91-XXXXXXXXXX",
+              "contactType": "Customer Service"
+            },
+            "sameAs": [
+              "https://facebook.com/dbangles",
+              "https://instagram.com/dbangles"
+            ]
+          })}
+        </script>
+      </Helmet>
       <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} onCartClick={() => navigate('/cart')} />
       <Hero />
       <RecommendedSection products={allProducts} />

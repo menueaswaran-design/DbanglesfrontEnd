@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { Share2 } from "lucide-react";
 import { useCart } from "./CartContext";
 import { useParams, useNavigate } from "react-router-dom";
@@ -161,6 +162,45 @@ function ProductModal() {
 
   return (
     <div className="productmodal-page">
+      <Helmet>
+        <title>{product?.name || 'Product'} - DBangles | Handmade Bangles & Dresses</title>
+        <meta 
+          name="description" 
+          content={product?.description || 'Handcrafted bangles and designer dresses with authentic traditional design.'} 
+        />
+        <meta name="keywords" content={`${product?.name}, ${product?.category}, handmade bangles, buy ${product?.category}`} />
+        <meta property="og:title" content={`${product?.name} - DBangles`} />
+        <meta property="og:description" content={product?.description} />
+        <meta property="og:image" content={product?.image} />
+        <meta property="og:type" content="product" />
+        <meta property="product:price:amount" content={product?.discountedPrice} />
+        <meta property="product:price:currency" content="INR" />
+        <link rel="canonical" href={`https://www.dbangles.in/product/${productid}`} />
+        
+        {/* Product Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product?.name,
+            "description": product?.description,
+            "image": product?.image,
+            "category": product?.category,
+            "brand": {
+              "@type": "Brand",
+              "name": "DBangles"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": `https://www.dbangles.in/product/${productid}`,
+              "priceCurrency": "INR",
+              "price": discountedPrice,
+              "availability": isSold ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+              "priceValidUntil": "2026-12-31"
+            }
+          })}
+        </script>
+      </Helmet>
       <Navbar />
        <WhatsappFloatingButton />
       <div className="productmodal-container">

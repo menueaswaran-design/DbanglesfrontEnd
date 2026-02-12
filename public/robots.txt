@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /cart
+Disallow: /track-orders
+
+Sitemap: https://www.dbangles.in/sitemap.xml

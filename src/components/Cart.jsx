@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { Trash2, X } from "lucide-react";
 import Navbar from "./Navbar";
 import CheckoutForm from "./CheckoutForm";
@@ -63,6 +64,15 @@ const Cart = ({ onCheckout, showCheckout }) => {
   if (displayItems.length === 0) {
     return (
       <div className="empty-cart">
+        <Helmet>
+          <title>Shopping Cart - DBangles | Handmade Bangles & Designer Dresses</title>
+          <meta 
+            name="description" 
+            content="Your shopping cart is empty. Browse our collection of handmade bangles, kundan bangles, designer sarees and dresses." 
+          />
+          <meta name="keywords" content="shopping cart, buy bangles online, handmade jewelry cart" />
+          <link rel="canonical" href="https://www.dbangles.in/cart" />
+        </Helmet>
         <Navbar />
          <WhatsappFloatingButton />
         <div className="empty-icon">🛒</div>
@@ -74,6 +84,16 @@ const Cart = ({ onCheckout, showCheckout }) => {
 
   return (
     <>
+      <Helmet>
+        <title>Shopping Cart ({displayItems.length} items) - DBangles</title>
+        <meta 
+          name="description" 
+          content="Review your selected handmade bangles and designer dresses. Secure checkout with fast delivery across India." 
+        />
+        <meta name="keywords" content="cart, checkout, buy bangles, online jewelry shopping" />
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href="https://www.dbangles.in/cart" />
+      </Helmet>
       {!showCheckout && <Navbar />}
 
       <div className="cart-container">
