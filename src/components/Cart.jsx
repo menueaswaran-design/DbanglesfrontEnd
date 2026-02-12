@@ -13,7 +13,7 @@ import WhatsappFloatingButton from "./WhatsappFloatingButton";
 
 
 // ==================== CART COMPONENT ====================
-const Cart = ({ onCheckout, showCheckout }) => {
+const Cart = ({ onCheckout, showCheckout, onBuyNowQtyChange }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity } = useCart();
@@ -28,7 +28,11 @@ const Cart = ({ onCheckout, showCheckout }) => {
 
   const increaseQty = (id) => {
     if (buyNowProduct) {
-      setBuyNowQty((qty) => qty + 1);
+      setBuyNowQty((qty) => {
+        const newQty = qty + 1;
+        onBuyNowQtyChange?.(newQty);
+        return newQty;
+      });
     } else {
       updateQuantity(id, 1);
     }
@@ -36,7 +40,11 @@ const Cart = ({ onCheckout, showCheckout }) => {
 
   const decreaseQty = (id) => {
     if (buyNowProduct) {
-      setBuyNowQty((qty) => (qty > 1 ? qty - 1 : 1));
+      setBuyNowQty((qty) => {
+        const newQty = qty > 1 ? qty - 1 : 1;
+        onBuyNowQtyChange?.(newQty);
+        return newQty;
+      });
     } else {
       updateQuantity(id, -1);
     }
@@ -400,11 +408,13 @@ const Cart = ({ onCheckout, showCheckout }) => {
 
 export default function CombinedCartCheckout() {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
   const [cartItems, setCartItems] = useState(() => {
     const stored = localStorage.getItem("cart");
     return stored ? JSON.parse(stored) : [];
   });
   const [showCheckout, setShowCheckout] = useState(false);
+  const [buyNowQtyOuter, setBuyNowQtyOuter] = useState(1);
 
   const [showOtpModal, setShowOtpModal] = useState(false);
 
@@ -432,6 +442,12 @@ export default function CombinedCartCheckout() {
 
   const { cart } = useCart();
 
+  // Determine checkout items: buyNow product takes priority over cart
+  const buyNowProduct = location.state?.product;
+  const checkoutItems = buyNowProduct
+    ? [{ ...buyNowProduct, quantity: buyNowQtyOuter }]
+    : cart;
+
   const handleCheckoutClose = () => {
     setShowCheckout(false);
   };
@@ -449,6 +465,7 @@ export default function CombinedCartCheckout() {
           updateCart={updateCart}
           onCheckout={handleProceedToCheckout}
           showCheckout={showCheckout}
+          onBuyNowQtyChange={setBuyNowQtyOuter}
         />
       </main>
 
@@ -467,7 +484,7 @@ export default function CombinedCartCheckout() {
         <CheckoutForm
           showCheckout={showCheckout}
           onClose={handleCheckoutClose}
-          cartItems={cart}
+          cartItems={checkoutItems}
         />
       )}
 
