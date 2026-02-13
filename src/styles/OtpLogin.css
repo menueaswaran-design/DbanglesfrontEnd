@@ -101,10 +101,48 @@
   color: #991b1b;
   font-size: 0.875rem;
   line-height: 1.4;
+  position: relative;
 }
 
 .error-icon {
   flex-shrink: 0;
+}
+
+.error-text {
+  flex: 1;
+}
+
+.retry-btn {
+  background: none;
+  border: none;
+  color: #991b1b;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  line-height: 1;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.retry-btn:hover {
+  background-color: rgba(153, 27, 27, 0.1);
+}
+
+/* Help Section */
+.signin-help {
+  margin-top: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+  padding: 0 1rem;
+  font-style: italic;
 }
 
 /* Sign-In Footer */

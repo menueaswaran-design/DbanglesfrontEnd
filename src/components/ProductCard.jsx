@@ -46,16 +46,16 @@ function ProductCard({ product, onView, showLabel = false }) {
       onClick={() => onView && onView(product)}
     >
       <div className="product-image-container">
-        {showLabel && product.label && product.label.toLowerCase() !== 'sold-out' && (
+        {showLabel && product.label && product.label.toLowerCase() !== 'sold-out' ? (
           <div className={`product-label product-label-${product.label.toLowerCase().replace(/\s+/g, '-')}`}>
             {product.label}
           </div>
-        )}
-        {isSold && (
+        ) : null}
+        {isSold ? (
           <div className="product-label product-label-sold-out">
             SOLD OUT
           </div>
-        )}
+        ) : null}
         <img
           src={product.image}
           alt={product.name}

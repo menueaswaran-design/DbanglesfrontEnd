@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD4woEevaPGv7PUHOQrxehVYiEaIXcyq6s",
@@ -13,3 +13,23 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+
+// Add better error handling for auth state
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    console.log("User is signed in:", user.uid);
+  } else {
+    console.log("User is signed out");
+  }
+}, (error) => {
+  console.error("Auth state change error:", error);
+});
+
+// Global error handler for uncaught Firebase errors
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason?.code?.startsWith('auth/')) {
+    console.warn('Firebase Auth Error caught:', event.reason);
+    // Prevent default error logging for known Firebase auth errors
+    event.preventDefault();
+  }
+});

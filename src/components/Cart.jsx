@@ -93,7 +93,7 @@ const Cart = ({ onCheckout, showCheckout, onBuyNowQtyChange }) => {
   return (
     <>
       <Helmet>
-        <title>Shopping Cart ({displayItems.length} items) - DBangles</title>
+        <title>{`Shopping Cart (${displayItems.length} items) - DBangles`}</title>
         <meta 
           name="description" 
           content="Review your selected handmade bangles and designer dresses. Secure checkout with fast delivery across India." 

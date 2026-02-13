@@ -24,9 +24,9 @@ function Hero() {
 
       <div className="hero-container">
         <div className="hero-content">
-          <h1 className="hero-title">Handmade Bangles & Designer Dresses - Authentic Handcrafted Jewelry</h1>
+          <h1 className="hero-title">Elegant & Premium Handcrafted Collections</h1>
           <p className="hero-subtitle">
-            Discover unique, handcrafted pieces that blend tradition with modern elegance.
+            Artisan bangles and designer clothing, meticulously handmade with timeless elegance.
           </p>
 
           <div className="hero-buttons">

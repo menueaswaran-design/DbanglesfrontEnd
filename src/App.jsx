@@ -10,6 +10,7 @@ import Cart from './components/Cart';
 import { CartProvider } from './components/CartContext';
 import { AuthProvider } from './components/AuthContext';
 import TrackOrders from './components/TrackOrders';
+import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 import ProductModal from './components/Productmodal';
 import Loader from './components/Loader';
@@ -22,35 +23,33 @@ function AppContent() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch products from API or localStorage (cache)
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-       // If not cached, fetch from API
-        const response = await fetch('https://dbangles.vercel.app/api/products');
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        if (data.success && data.products) {
-          // Separate products by productType
-          const bangles = data.products.filter(p => p.productType === 'bangles');
-          const dresses = data.products.filter(p => p.productType === 'dresses');
-          const newProductsData = { bangles, dresses };
-          setProductsData(newProductsData);
-          // Cache in localStorage
-         
-        } else {
-          setProductsData({ bangles: [], dresses: [] });
-        }
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
+  // Fetch products from API
+  const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('https://dbangles.vercel.app/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
       }
-    };
+      const data = await response.json();
+      if (data.success && data.products) {
+        const bangles = data.products.filter(p => p.productType === 'bangles');
+        const dresses = data.products.filter(p => p.productType === 'dresses');
+        setProductsData({ bangles, dresses });
+      } else {
+        setProductsData({ bangles: [], dresses: [] });
+      }
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -92,7 +91,11 @@ function AppContent() {
   if (loading) {
     return (
       <div className="app">
-        <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <Navbar 
+          searchQuery={searchQuery} 
+          setSearchQuery={setSearchQuery}
+          productsData={{ bangles: [], dresses: [] }}
+        />
         <Hero />
         <main className="main-content">
           <div style={{ paddingTop: 80 }}><Loader text="Loading products..." /></div>
@@ -106,10 +109,33 @@ function AppContent() {
   if (error) {
     return (
       <div className="app">
-        <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <Navbar 
+          searchQuery={searchQuery} 
+          setSearchQuery={setSearchQuery}
+          productsData={{ bangles: [], dresses: [] }}
+        />
         <Hero />
         <main className="main-content">
-          <div className="error">Error: {error}</div>
+          <div className="fetch-error-container">
+            <div className="fetch-error-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#764ba2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4" />
+                <path d="M12 16h.01" />
+              </svg>
+            </div>
+            <h2 className="fetch-error-title">Unable to Load Products</h2>
+            <p className="fetch-error-text">
+              We couldn't fetch the products right now. Please check your connection and try again.
+            </p>
+            <button className="fetch-error-retry-btn" onClick={fetchProducts}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+              Retry
+            </button>
+          </div>
         </main>
         <WhatsappFloatingButton />
       </div>
@@ -154,7 +180,12 @@ function AppContent() {
           })}
         </script>
       </Helmet>
-      <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} onCartClick={() => navigate('/cart')} />
+      <Navbar 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        onCartClick={() => navigate('/cart')}
+        productsData={productsData}
+      />
       <Hero />
       <RecommendedSection products={allProducts} />
       <main className="main-content">
@@ -184,20 +215,22 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<AppContent />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path='/product/:productid' element={<ProductModal />} />
-            <Route path='/track-orders' element={<TrackOrders />} />
-            {/* <Route path='/login' element={<OtpLogin />} /> */}
-            {/* <Route path='/orders' element={<Orders />} /> */}
-          </Routes>
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<AppContent />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path='/product/:productid' element={<ProductModal />} />
+              <Route path='/track-orders' element={<TrackOrders />} />
+              {/* <Route path='/login' element={<OtpLogin />} /> */}
+              {/* <Route path='/orders' element={<Orders />} /> */}
+            </Routes>
+          </Router>
+        </CartProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

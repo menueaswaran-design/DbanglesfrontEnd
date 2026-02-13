@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth } from "../firebase";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import "../styles/OtpLogin.css";
 
 const GoogleSignIn = ({ onSuccess }) => {
@@ -13,7 +13,24 @@ const GoogleSignIn = ({ onSuccess }) => {
 
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+
+      // Try popup first, fall back to redirect if blocked
+      let result;
+      try {
+        result = await signInWithPopup(auth, provider);
+      } catch (popupError) {
+        if (popupError.code === 'auth/popup-blocked' || 
+            popupError.code === 'auth/popup-closed-by-user' ||
+            popupError.message.includes('popup')) {
+          console.log("Popup blocked, trying redirect method");
+          await signInWithRedirect(auth, provider);
+          return; // The redirect will handle the rest
+        }
+        throw popupError; // Re-throw other errors
+      }
       
       console.log("Logged in user:", result.user);
       
@@ -23,11 +40,45 @@ const GoogleSignIn = ({ onSuccess }) => {
       }
     } catch (error) {
       console.error("Google Sign-In Error:", error);
-      setError(error.message);
+      
+      // User-friendly error messages
+      let errorMessage = "Sign-in failed. Please try again.";
+      
+      if (error.code === 'auth/popup-blocked') {
+        errorMessage = "Popup was blocked. Please allow popups and try again.";
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = "Sign-in was cancelled. Please try again.";
+      } else if (error.code === 'auth/network-request-failed') {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = "Too many attempts. Please try again later.";
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
+  // Check for redirect result when component mounts
+  React.useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          console.log("Redirect sign-in successful:", result.user);
+          if (onSuccess) {
+            onSuccess();
+          }
+        }
+      } catch (error) {
+        console.error("Redirect result error:", error);
+        setError("Sign-in failed after redirect. Please try again.");
+      }
+    };
+
+    checkRedirectResult();
+  }, [onSuccess]);
 
   return (
     <div className="google-signin-container">
@@ -54,9 +105,22 @@ const GoogleSignIn = ({ onSuccess }) => {
       {error && (
         <div className="error-message">
           <span className="error-icon">⚠️</span>
-          {error}
+          <span className="error-text">{error}</span>
+          <button 
+            className="retry-btn"
+            onClick={() => setError("")}
+            type="button"
+          >
+            ✕
+          </button>
         </div>
       )}
+
+      <div className="signin-help">
+        <p className="help-text">
+          Having trouble? Try refreshing the page or disabling popup blockers.
+        </p>
+      </div>
 
       <div className="signin-footer">
         <p className="privacy-text">
