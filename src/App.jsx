@@ -59,7 +59,6 @@ function AppContent() {
     'Kundan bangles',
     'Glass bangles',
     'Hair accessories',
-    'Saree pins',
     'Invisible chains',
     'Bracelets'
   ];
