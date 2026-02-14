@@ -24,6 +24,51 @@
   margin: 0;
 }
 
+/* Carousel wrapper */
+.recommended-carousel {
+  position: relative;
+  padding: 0;
+}
+
+/* Arrow buttons */
+.recommended-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #1f2937;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.recommended-arrow:hover {
+  background: #1f2937;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.recommended-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.recommended-arrow-left {
+  left: 16px;
+}
+
+.recommended-arrow-right {
+  right: 16px;
+}
+
 .recommended-scroll-container {
   padding: 0 1rem;
   overflow-x: auto;
@@ -115,7 +160,7 @@
   }
 
   .recommended-scroll-container {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
   }
 
   .recommended-product-wrapper {
@@ -130,6 +175,28 @@
 
   .recommended-products {
     gap: 0.75rem;
+  }
+
+  .recommended-carousel {
+    padding: 0;
+  }
+
+  .recommended-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .recommended-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .recommended-arrow-left {
+    left: 8px;
+  }
+
+  .recommended-arrow-right {
+    right: 8px;
   }
 }
 

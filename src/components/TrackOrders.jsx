@@ -241,49 +241,57 @@ const TrackOrders = () => {
 
               return (
                 <div key={orderId} className="order-card">
-                  {/* First Product Name */}
-                  {order.orderedProducts && order.orderedProducts.length > 0 && (
-                    <h3 className="order-product-name">
-                      {order.orderedProducts[0].name}
-                      {order.orderedProducts.length > 1 && (
-                        <span className="more-items"> +{order.orderedProducts.length - 1} more</span>
-                      )}
-                    </h3>
-                  )}
-
-                  {/* Status */}
-                  <div className="order-status" style={{ color: getStatusColor(order.orderStatus) }}>
-                    {getStatusIcon(order.orderStatus)}
-                    <span>{order.orderStatus || "Processing"}</span>
+                  {/* Card Top: Status + Date */}
+                  <div className="order-card-top">
+                    <div className="order-status-badge" style={{ background: getStatusColor(order.orderStatus) + '15', color: getStatusColor(order.orderStatus) }}>
+                      {getStatusIcon(order.orderStatus)}
+                      <span>{order.orderStatus || "Processing"}</span>
+                    </div>
+                    <span className="order-date">{formattedDate}</span>
                   </div>
 
-                  {/* Date */}
-                  <div className="order-date">{formattedDate}</div>
-
-                  {/* Expanded Details */}
-                  {isExpanded && order.orderedProducts && order.orderedProducts.length > 1 && (
-                    <div className="order-details-expanded">
-                      <div className="other-products-list">
-                        {order.orderedProducts.map((product, idx) => (
-                          <div key={idx} className="product-detail-item">
-                            <span className="product-name">{product.name}</span>
-                            <span className="product-qty">Qty: {product.quantity}</span>
-                            <span className="product-price">₹{product.price}</span>
+                  {/* Product Items - always visible, clickable */}
+                  {order.orderedProducts && order.orderedProducts.length > 0 && (
+                    <div className="order-products-list">
+                      {(isExpanded ? order.orderedProducts : order.orderedProducts.slice(0, 2)).map((product, idx) => (
+                        <div
+                          key={idx}
+                          className="order-product-item"
+                          onClick={() => navigate(`/product/${product.productId || product._id || product.id || ''}`)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => e.key === 'Enter' && navigate(`/product/${product.productId || product._id || product.id || ''}`)}
+                        >
+                          {product.image && (
+                            <div className="order-product-thumb">
+                              <img src={product.image} alt={product.name} />
+                            </div>
+                          )}
+                          <div className="order-product-info">
+                            <span className="order-product-name">{product.name}</span>
+                            <span className="order-product-qty">Qty: {product.quantity}</span>
                           </div>
-                        ))}
-                      </div>
+                          <span className="order-product-price">₹{product.price}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
 
-                  {/* Show More Button - only if more than 1 product */}
-                  {order.orderedProducts && order.orderedProducts.length > 1 && (
+                  {/* Show More / Less toggle */}
+                  {order.orderedProducts && order.orderedProducts.length > 2 && (
                     <button 
                       className="show-more-btn" 
                       onClick={() => toggleOrderDetails(orderId)}
                     >
-                      {isExpanded ? "Show Less" : "Show More Details"}
+                      {isExpanded ? "Show less" : `+${order.orderedProducts.length - 2} more item${order.orderedProducts.length - 2 > 1 ? 's' : ''}`}
                     </button>
                   )}
+
+                  {/* Order Total */}
+                  <div className="order-card-footer">
+                    <span className="order-total-label">Total</span>
+                    <span className="order-total-value">₹{calculatedTotal}</span>
+                  </div>
                 </div>
               );
             })}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import { ShoppingBag, LogOut, Search } from "lucide-react";
+import logoImg from "../assets/logo.png";
 import "../styles/Navbar.css";
 
 function Navbar({ searchQuery, setSearchQuery, onCartClick, productsData = { bangles: [], dresses: [] } }) {
@@ -15,6 +16,7 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick, productsData = { ban
   const { user, logout } = useAuth();
   const cartCount = cart.length;
   const navigate = useNavigate();
+  const location = useLocation();
 
   // All products for search suggestions
   const allProducts = [...(productsData.bangles || []), ...(productsData.dresses || [])];
@@ -70,14 +72,13 @@ function Navbar({ searchQuery, setSearchQuery, onCartClick, productsData = { ban
         <div className="navbar-container">
           {/* LOGO (HIDDEN ON MOBILE VIA CSS) */}
           <div className="navbar-logo" onClick={() => navigate("/")}>
-            <h1>DBangles</h1>
-            <span className="logo-tagline">Handmade Elegance</span>
+            <img src={logoImg} alt="DBangles" className="navbar-logo-img" />
           </div>
 
           <ul className="navbar-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="#bangles">Bangles</a></li>
-            <li><a href="#dresses">Dresses</a></li>
+            <li><a href="/" className={location.pathname === '/' && !location.hash ? 'nav-active' : ''}>Home</a></li>
+            <li><a href="#bangles" className={location.hash === '#bangles' ? 'nav-active' : ''}>Bangles</a></li>
+            <li><a href="#dresses" className={location.hash === '#dresses' ? 'nav-active' : ''}>Dresses</a></li>
           </ul>
 
           {/* Mobile Search and Hamburger Container */}

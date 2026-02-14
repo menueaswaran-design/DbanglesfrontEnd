@@ -110,9 +110,6 @@
 @media (max-width: 768px) {
   .hamburger-menu {
     display: flex !important;
-    position: absolute;
-    right: 16px;
-    top: 16px;
   }
   
   .mobile-only {
@@ -151,23 +148,16 @@
 /* ================= LOGO ================= */
 .navbar-logo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   cursor: pointer;
+  margin-top: 6px;
 }
 
-.navbar-logo h1 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #764ba2, #667eea);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0;
-}
-
-.logo-tagline {
-  font-size: 0.65rem;
-  color: #666;
-  font-weight: 500;
+.navbar-logo-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 /* ================= MENU ================= */
@@ -175,18 +165,30 @@
   display: flex;
   list-style: none;
   gap: 2rem;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
+  align-items: center;
 }
 
 .navbar-menu li a {
-  color: #333;
+  color: #555;
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.95rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: all 0.2s ease;
 }
 
 .navbar-menu li a:hover {
   color: #764ba2;
+  background: rgba(118, 75, 162, 0.08);
+}
+
+.navbar-menu li a.nav-active {
+  color: #764ba2;
+  background: rgba(118, 75, 162, 0.12);
+  font-weight: 600;
 }
 
 /* ================= ACTIONS ================= */
@@ -280,10 +282,38 @@
 
 /* ================= MOBILE ================= */
 @media (max-width: 768px) {
+  .navbar {
+    height: 60px;
+  }
+
+  .navbar-container {
+    padding: 0 12px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .navbar-menu,
   .desktop-only,
-  .search-container {
+  .search-container,
+  .navbar-actions {
     display: none;
+  }
+
+  .navbar-logo {
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+
+  .navbar-logo-img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .mobile-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
   }
 }
 
