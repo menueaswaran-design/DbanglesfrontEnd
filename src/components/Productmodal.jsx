@@ -47,9 +47,32 @@ function ProductModal() {
   const handleShare = async () => {
     if (!product) return;
     const shareTitle = `DBangles | ${product.name}`;
-    const shareText = `Discover "${product.name}" for just ₹${product.discountedPrice} \n\n${product.description}\n\nShop now at DBangles!`;
+    const shareText = `Discover "${product.name}" for just ₹${product.discountedPrice}\n\n${product.description}\n\nShop now 👇`;
     const shareUrl = window.location.href;
+
     if (navigator.share) {
+      // Try to share with image file (Web Share API Level 2)
+      if (product.image && navigator.canShare) {
+        try {
+          const response = await fetch(product.image);
+          const blob = await response.blob();
+          const ext = blob.type.includes("png") ? "png" : "jpg";
+          const file = new File([blob], `${product.name.replace(/\s+/g, "_")}.${ext}`, { type: blob.type });
+
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: shareTitle,
+              text: `${shareText}\n${shareUrl}`,
+              files: [file],
+            });
+            return;
+          }
+        } catch (error) {
+          console.log("Image share failed, falling back to link share", error);
+        }
+      }
+
+      // Fallback: share without image
       try {
         await navigator.share({
           title: shareTitle,
