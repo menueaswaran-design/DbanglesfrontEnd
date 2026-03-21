@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -15,17 +15,34 @@ import './App.css';
 import ProductModal from './components/Productmodal';
 import Loader from './components/Loader';
 import WhatsappFloatingButton from './components/WhatsappFloatingButton';
+import ContactUs from './components/ContactUs';
+import AboutUs from './components/AboutUs';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsAndConditions from './components/TermsAndConditions';
+import RefundPolicy from './components/RefundPolicy';
+import ShippingPolicy from './components/ShippingPolicy';
 // import OtpLogin from './components/OtpLogin';
 function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [productsData, setProductsData] = useState({ bangles: [], dresses: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [savedScroll, setSavedScroll] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const scrollRestoredRef = useRef(false);
+  const previousScrollBehaviorRef = useRef('');
+
+  // Prevent browser from auto-restoring scroll to top on navigation
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
 
   // Fetch products from API
-  const fetchProducts = async () => {
-    setLoading(true);
+  const fetchProducts = async (hasCache = false) => {
+    setLoading(!hasCache);
     setError(null);
     try {
       const response = await fetch('https://dbangles.vercel.app/api/products');
@@ -36,7 +53,9 @@ function AppContent() {
       if (data.success && data.products) {
         const bangles = data.products.filter(p => p.productType === 'bangles');
         const dresses = data.products.filter(p => p.productType === 'dresses');
-        setProductsData({ bangles, dresses });
+        const nextData = { bangles, dresses };
+        setProductsData(nextData);
+        window.sessionStorage.setItem('productsCache', JSON.stringify(nextData));
       } else {
         setProductsData({ bangles: [], dresses: [] });
       }
@@ -50,8 +69,52 @@ function AppContent() {
   };
 
   useEffect(() => {
-    fetchProducts();
+    const cached = window.sessionStorage.getItem('productsCache');
+    const hasCache = !!cached;
+    if (hasCache) {
+      try {
+        const parsed = JSON.parse(cached);
+        setProductsData(parsed);
+        setLoading(false);
+      } catch (_) {
+        // ignore cache parse errors
+      }
+    }
+    fetchProducts(hasCache);
   }, []);
+
+  useLayoutEffect(() => {
+    // Capture saved scroll (if any) before paint to avoid initial jump to top
+    const saved = window.sessionStorage.getItem('homeScroll');
+    if (saved !== null) {
+      const value = Number(saved);
+      setSavedScroll(value);
+      // Temporarily disable smooth scroll so restoration is instant
+      const root = document.documentElement;
+      previousScrollBehaviorRef.current = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo({ top: value, behavior: 'auto' });
+      window.sessionStorage.removeItem('homeScroll');
+      scrollRestoredRef.current = false;
+    }
+  }, [location.key]);
+
+  useEffect(() => {
+    // Restore scroll only after data is loaded to avoid jumping to top before content renders
+    if (!loading && savedScroll !== null && !scrollRestoredRef.current) {
+      const root = document.documentElement;
+      const prev = previousScrollBehaviorRef.current;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo({ top: savedScroll, behavior: 'auto' });
+      // restore previous behavior (likely smooth) after instant jump
+      if (prev) {
+        root.style.scrollBehavior = prev;
+      } else {
+        root.style.removeProperty('scroll-behavior');
+      }
+      scrollRestoredRef.current = true;
+    }
+  }, [loading, savedScroll]);
 
   // Bangles categories
   const banglesCategories = [
@@ -204,6 +267,14 @@ function AppContent() {
         />
       </main>
       <footer className="footer">
+        <div className="footer-links">
+          <a href="/about-us">About Us</a>
+          <a href="/contact-us">Contact Us</a>
+          <a href="/privacy-policy">Privacy Policy</a>
+          <a href="/terms-and-conditions">Terms & Conditions</a>
+          <a href="/refund-policy">Refund & Cancellation</a>
+          <a href="/shipping-policy">Shipping & Delivery</a>
+        </div>
         <p>&copy; 2026 DBangles - Handmade Elegance. All rights reserved.</p>
       </footer>
       <WhatsappFloatingButton />
@@ -223,6 +294,12 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path='/product/:productid' element={<ProductModal />} />
               <Route path='/track-orders' element={<TrackOrders />} />
+              <Route path='/contact-us' element={<ContactUs />} />
+              <Route path='/about-us' element={<AboutUs />} />
+              <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+              <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
+              <Route path='/refund-policy' element={<RefundPolicy />} />
+              <Route path='/shipping-policy' element={<ShippingPolicy />} />
               {/* <Route path='/login' element={<OtpLogin />} /> */}
               {/* <Route path='/orders' element={<Orders />} /> */}
             </Routes>

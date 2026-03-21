@@ -18,6 +18,14 @@ function ProductSection({ title, products, id, showCategories, categories }) {
     ? products 
     : products.filter(product => product.category === selectedCategory);
 
+  const handleView = (prod) => {
+    // Preserve scroll position so returning from product page restores the list position
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      window.sessionStorage.setItem('homeScroll', String(window.scrollY || 0));
+    }
+    Navigate(`/product/${prod._id || prod.id}`);
+  };
+
   return (
     <section className="product-section" id={id}>
       <div className="section-header">
@@ -50,7 +58,7 @@ function ProductSection({ title, products, id, showCategories, categories }) {
             <ProductCard
               key={product.id}
               product={product}
-              onView={(prod) => Navigate(`/product/${prod._id || prod.id}`)}
+              onView={handleView}
             />
           ))}
         </div>
